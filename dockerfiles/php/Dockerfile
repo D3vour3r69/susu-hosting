@@ -1,27 +1,30 @@
 FROM php:8.2-fpm-alpine
 
-# Установка зависимостей и расширений PHP
-RUN apt-get update && apt-get install -y \
+# Установка зависимостей (Alpine)
+RUN apk update && apk add --no-cache \
     git \
     unzip \
-    libpq-dev \
+    postgresql-dev \
     libzip-dev \
+    zip \
     && docker-php-ext-install pdo pdo_pgsql zip
 
-# Установка Composer
+# Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Рабочая директория
 WORKDIR /var/www
 
-# Копируем зависимости
-COPY src/composer.json src/composer.lock ./
-RUN composer install --no-scripts --no-autoloader
+# Копируем ТОЛЬКО зависимости
+COPY composer.json composer.lock ./
+
+# Установка зависимостей
+RUN composer install --no-scripts --no-autoloader --no-dev
 
 # Копируем весь проект
-COPY src/ .
+COPY . .
 
-# Генерируем автозагрузку и оптимизируем
+# Генерируем автозагрузку
 RUN composer dump-autoload --optimize
 
 # Права для Laravel

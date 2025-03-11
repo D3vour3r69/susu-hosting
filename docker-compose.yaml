@@ -3,10 +3,10 @@ version: '3.8'
 services:
   app:
     build:
-      context: .
-      dockerfile: dockerfiles/php/Dockerfile
+      context: ./hosting-app  # Измените контекст сборки
+      dockerfile: ../dockerfiles/php/Dockerfile
     volumes:
-      - ./src:/var/www
+      - ./hosting-app:/var/www
     environment:
       - DB_CONNECTION=pgsql
       - DB_HOST=db
@@ -22,13 +22,13 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - ./src:/var/www
-      - ./docker/nginx:/etc/nginx/conf.d
+      - ./hosting-app:/var/www
+      - ./dockerfiles/nginx:/etc/nginx/conf.d
     depends_on:
       - app
 
   db:
-    image: postgres:15
+    image: postgres:16.4-alpine
     environment:
       POSTGRES_DB: laravel
       POSTGRES_USER: laravel
