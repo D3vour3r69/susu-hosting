@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'external_id'
     ];
 
     /**
@@ -45,4 +46,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function externalEntity()
+    {
+        // Что-то типо такого наверное, пока не уверен.
+        return ExternalApiService::getById($this->external_id);
+    }
+
 }
