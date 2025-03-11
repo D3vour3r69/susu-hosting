@@ -1,20 +1,19 @@
 Шаги для запуска проекта
+
+
 1. Клонирование репозитория
 Перейдите в директорию, где вы хотите разместить проект, и выполните команду для клонирования репозитория:
 
-bash
 git clone https://github.com/D3vour3r69/susu-hosting/tree/feature
 
 2. Запуск контейнеров
 Запустите все контейнеры с помощью Docker Compose:
 
-bash
 docker-compose up -d
 
 3. Применение миграций
 После запуска контейнеров примените миграции для базы данных:
 
-bash
 docker-compose exec app php artisan migrate
 
 4.Проверка работоспособности
@@ -23,7 +22,6 @@ docker-compose exec app php artisan migrate
 5. Остановка контейнеров
 Чтобы остановить контейнеры, используйте команду:
 
-bash
 docker-compose stop
 
 6. Удаление контейнеров
