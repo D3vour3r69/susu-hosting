@@ -12,9 +12,9 @@ cd hosting-app
 ```
 
 2. Скопируйте `.env.example` в `.env`:
-   ```bash
-   cp .env.example .env
-   ```
+```bash
+cp .env.example .env
+```
    
 3. Настройте переменные окружения в `.env`:
    - Убедитесь, что `DB_HOST` совпадают с именами сервисов в `compose.yaml`.
