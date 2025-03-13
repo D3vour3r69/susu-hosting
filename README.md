@@ -52,7 +52,7 @@ git clone https://github.com/D3vour3r69/susu-hosting/tree/feature
    docker-compose exec app php artisan migrate
    ```
 
-3.Проверка работоспособности
+##Проверка работоспособности
   Откройте веб-браузер и перейдите по адресу http://localhost:8000, чтобы проверить работоспособность приложения.
 
  Остановка контейнеров
