@@ -7,6 +7,11 @@
         @if(session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
+                <!-- Используем session('application_id') вместо $application -->
+                <a href="{{ route('applications.download', session('application_id')) }}"
+                   class="btn btn-sm btn-primary mt-2">
+                    Скачать записку
+                </a>
             </div>
         @endif
 
