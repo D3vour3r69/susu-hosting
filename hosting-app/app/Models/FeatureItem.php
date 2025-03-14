@@ -13,6 +13,6 @@ class FeatureItem extends Model
 
     public function applications()
     {
-        return $this->belongsToMany(Application::class);
+        return $this->belongsToMany(Application::class, 'application_feature_item');
     }
 }

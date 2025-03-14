@@ -13,7 +13,7 @@ class Unit extends Model
     ];
 
     protected $casts = [
-        'external_id' => 'integer' // или 'string' в зависимости от того что в API получается.
+        'external_id' => 'string' // или 'string' в зависимости от того что в API получается.
     ];
 
     public function externalEntity()
