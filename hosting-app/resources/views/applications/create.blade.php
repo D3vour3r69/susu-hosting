@@ -36,8 +36,10 @@
                             <label class="form-check-label" for="item_{{ $item->id }}">
                                 {{ $item->name }}
                             </label>
+
                         </div>
                     @endforeach
+
                 </div>
             @endforeach
 
@@ -46,7 +48,14 @@
                 <label for="notes" class="form-label">Дополнительные заметки</label>
                 <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
             </div>
-
+            <div class="form-group mb-3">
+                <label>Статус</label>
+                <select name="status" class="form-select">
+                    <option value="active">Активно</option>
+                    <option value="inactive">Не активно</option>
+                    <option value="completed">Завершено</option>
+                </select>
+            </div>
             <button type="submit" class="btn btn-primary">Отправить</button>
         </form>
     </div>

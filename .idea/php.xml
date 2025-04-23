@@ -128,6 +128,7 @@
       <path value="$PROJECT_DIR$/hosting-app/vendor/laravel/serializable-closure" />
       <path value="$PROJECT_DIR$/hosting-app/vendor/laravel/pint" />
       <path value="$PROJECT_DIR$/hosting-app/vendor/hamcrest/hamcrest-php" />
+      <path value="$PROJECT_DIR$/hosting-app/vendor/laravel/ui" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

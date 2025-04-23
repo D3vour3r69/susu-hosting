@@ -11,7 +11,7 @@ class Application extends Model
     protected $fillable = [
         'user_id',
         'notes',
-
+        'status'
     ];
     public function user()
     {
@@ -26,5 +26,14 @@ class Application extends Model
     public function featureItems()
     {
         return $this->belongsToMany(FeatureItem::class, 'application_feature_item');
+    }
+
+    public function getStatusTextAttribute()
+    {
+        return [
+            'active' => 'Активно',
+            'inactive' => 'Не активно',
+            'completed' => 'Завершено'
+        ][$this->status];
     }
 }

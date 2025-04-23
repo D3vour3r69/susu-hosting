@@ -7,9 +7,19 @@ use App\Models\Application;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Hash;
 
 class ApplicationController extends Controller
 {
+    public function index()
+    {
+        $applications = Application::where('user_id', auth()->id())
+            ->with(['featureItems.feature'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('applications', compact('applications'));
+    }
     // Показ формы
     public function create()
     {
@@ -20,42 +30,38 @@ class ApplicationController extends Controller
     // Сохранение заявки
     public function store(Request $request)
     {
-        try {
-            // Валидация
-            $validated = $request->validate([
-                'feature_items' => 'required|array',
-                'feature_items.*' => 'exists:feature_items,id',
-                'notes' => 'nullable|string',
-            ]);
+
+        // Валидация
+        $validated = $request->validate([
+            'feature_items' => 'required|array',
+            'feature_items.*' => 'exists:feature_items,id',
+            'notes' => 'nullable|string',
+            'status' => 'required|in:active,inactive,completed'
+        ]);
 
             // Получаем тестового пользователя
-            $testUser = User::firstOrCreate(
-                ['email' => 'test@example.com'],
-                [
-                    'name' => 'Test User',
-                    'password' => bcrypt('password'),
-                    'email_verified_at' => now() // Добавьте запятую, если будут новые элементы
-                ] // Закрывающая скобка массива параметров
-            );
+        $testUser = User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now()
+            ]
+        );
 
             // Создание заявки
-            $application = Application::create([
-                'user_id' => $testUser->id,
-                'notes' => $validated['notes'],
-            ]);
+        $application = Application::create([
+            'user_id' => auth()->id(),
+            'notes' => $validated['notes'],
+            'status' => $validated['status']
+        ]);
 
-            // Привязка параметров
-            $application->featureItems()->attach($validated['feature_items']);
+        // Привязка параметров
+        $application->featureItems()->attach($validated['feature_items']);
 
-            return redirect()->route('applications.create')
-                ->with('success', 'Заявка успешно создана!')
-                ->with('application_id', $application->id); // Передаем объект заявки
-        } catch (Exception $e) {
-            return redirect()->back()
-                ->withErrors(['error' => 'Ошибка: ' . $e->getMessage()])
-                ->withInput();
-        }
-
+        return redirect()->route('applications.create')
+            ->with('success', 'Заявка успешно создана!')
+            ->with('application_id', $application->id); // Передаем объект заявки
     }
     public function download($id)
     {
@@ -76,4 +82,19 @@ class ApplicationController extends Controller
             ->header('Content-Type', 'text/plain')
             ->header('Content-Disposition', 'attachment; filename="application_'.$application->id.'.txt"');
     }
-} // Закрывающая скобка класса
+
+    public function destroy($id)
+    {
+        $application = Application::findOrFail($id);
+
+        // Проверка прав доступа
+        if ($application->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $application->delete();
+
+        return redirect()->back()
+            ->with('success', 'Заявка успешно удалена');
+    }
+}
