@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Feature;
 use App\Models\Application;
+use App\Models\Unit;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -17,6 +18,22 @@ class ApplicationController extends Controller
         $this->authorizeResource(Application::class, 'application');
     }
 
+//    public function index(Request $request)
+//    {
+//        $units = Unit::all();
+//        $selectedUnitId = $request->input('unit_id');
+//
+//        $applications = Application::with(['user', 'user.units'])
+//            ->when($selectedUnitId, function ($query) use ($selectedUnitId) {
+//                $query->whereHas('user.units', function ($q) use ($selectedUnitId) {
+//                    $q->where('units.id', $selectedUnitId);
+//                });
+//            })
+//            ->orderByDesc('created_at')
+//            ->paginate(10);
+//
+//        return view('applications.unit-index', compact('applications', 'units', 'selectedUnitId'));
+//    }
     public function index()
     {
         $applications = Auth::user()->applications()

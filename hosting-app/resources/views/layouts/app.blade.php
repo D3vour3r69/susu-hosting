@@ -127,6 +127,12 @@
                         <a class="nav-link {{ request()->routeIs('applications.index') ? 'active' : '' }}"
                            href="{{ route('applications.index') }}">Мои записки</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('applications.by-unit') ? 'active' : '' }}"
+                           href="{{ route('applications.by-unit') }}">
+                            <i class="fas fa-building me-2"></i>По подразделениям
+                        </a>
+                    </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">

@@ -8,17 +8,35 @@ class Unit extends Model
 {
     protected $fillable = [
         'name',
-        'head_name',
-        'external_id'
+        'external_id',
+        'head_id'
     ];
 
-    protected $casts = [
-        'external_id' => 'string' // или 'string' в зависимости от того что в API получается.
-    ];
-
-    public function externalEntity()
+    public function head()
     {
-        // Пример связи через API-шлюз
-        return ExternalApiService::getById($this->external_id);
+        return $this->belongsTo(User::class, 'head_id');
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+
+    }
+
+    public function isHeadMember(User $user)
+    {
+        return $this->users->contains($user->id);
+    }
+
+    public function applications()
+    {
+        return $this->hasManyThrough(
+            Application::class, // Целевая модель
+            User::class,        // Промежуточная модель
+            'unit_id',          // Внешний ключ в промежуточной таблице (unit_user)
+            'user_id',          // Внешний ключ в целевой таблице (applications)
+            'id',               // Локальный ключ текущей модели (units.id)
+            'id'                // Локальный ключ промежуточной модели (users.id)
+        );
     }
 }

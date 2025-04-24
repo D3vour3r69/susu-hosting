@@ -13,12 +13,15 @@ return new class extends Migration
     {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('head');
+            $table->string('name')->unique();
+            $table->foreignId('head_id')
+                ->nullable()
+                ->constrained('users')       // Связь с users
+                ->onDelete('set null');      // При удалении пользователя → null
             $table->unsignedBigInteger('external_id')->nullable();
-
             $table->timestamps();
-            $table->index('external_id'); //Индекс для внешнего ключа, потенциально ускоряет обработки
+
+            $table->index('external_id');
         });
     }
 

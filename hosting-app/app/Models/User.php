@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -43,14 +44,13 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
-    public function externalEntity()
+
+    public function units(): BelongsToMany
     {
-        // Что-то типо такого наверное, пока не уверен.
-        return ExternalApiService::getById($this->external_id);
+        return $this->belongsToMany(Unit::class);
     }
 
     public function applications(): HasMany

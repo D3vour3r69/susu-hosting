@@ -10,6 +10,7 @@ class Application extends Model
     use HasFactory;
     protected $fillable = [
         'user_id',
+        'unit_id',
         'notes',
         'status'
     ];
