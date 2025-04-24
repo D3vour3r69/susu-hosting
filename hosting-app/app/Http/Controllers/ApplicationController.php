@@ -6,97 +6,85 @@ use App\Models\Feature;
 use App\Models\Application;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class ApplicationController extends Controller
 {
-
+    public function __construct()
+    {
+        $this->authorizeResource(Application::class, 'application');
+    }
 
     public function index()
     {
-        $applications = Application::where('user_id', auth()->id())
+        $applications = Auth::user()->applications()
             ->with(['featureItems.feature'])
-            ->orderBy('created_at', 'desc')
+            ->latest()
             ->get();
 
-        return view('applications', compact('applications'));
+        return view('applications.index', compact('applications'));
     }
-    // Показ формы
+
     public function create()
     {
         $features = Feature::with('items')->get();
         return view('applications.create', compact('features'));
     }
 
-    // Сохранение заявки
     public function store(Request $request)
     {
-
-        // Валидация
         $validated = $request->validate([
-            'feature_items' => 'required|array',
-            'feature_items.*' => 'exists:feature_items,id',
-            'notes' => 'nullable|string',
+            'features' => 'required|array',
+            'features.*' => 'required|exists:feature_items,id',
+            'notes' => 'nullable|string|max:1000',
             'status' => 'required|in:active,inactive,completed'
         ]);
 
-            // Получаем тестового пользователя
-        $testUser = User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test User',
-                'password' => Hash::make('password'),
-                'email_verified_at' => now()
-            ]
+        try {
+            // Создание записки
+            $application = Application::create([
+                'user_id' => auth()->id(),
+                'notes' => $validated['notes'],
+                'status' => $validated['status']
+            ]);
+
+            // Привязка выбранных параметров
+            $application->featureItems()->sync(
+                collect($validated['features'])->values()->all()
+            );
+
+            return redirect()->route('applications.index')
+                ->with([
+                    'success' => 'Записка успешно создана!',
+                    'application_id' => $application->id
+                ]);
+
+        } catch (\Exception $e) {
+            // Логирование ошибки
+            \Log::error('Ошибка создания записки: ' . $e->getMessage());
+
+            return back()->withInput()
+                ->withErrors(['error' => 'Ошибка создания. Попробуйте позже.']);
+        }
+    }
+
+    public function download(Application $application)
+    {
+        $this->authorize('view', $application);
+
+        $content = view('applications.download', compact('application'));
+
+        return response()->streamDownload(
+            fn() => print($content),
+            "application_{$application->id}.txt"
         );
-
-            // Создание заявки
-        $application = Application::create([
-            'user_id' => auth()->id(),
-            'notes' => $validated['notes'],
-            'status' => $validated['status']
-        ]);
-
-        // Привязка параметров
-        $application->featureItems()->attach($validated['feature_items']);
-
-        return redirect()->route('applications.create')
-            ->with('success', 'Заявка успешно создана!')
-            ->with('application_id', $application->id); // Передаем объект заявки
-    }
-    public function download($id)
-    {
-        $application = Application::with(['user', 'featureItems.feature'])->findOrFail($id);
-
-        $content = "Служебная записка #{$application->id}\n";
-        $content .= "Дата: {$application->created_at->format('d.m.Y H:i')}\n";
-        $content .= "Пользователь: {$application->user->name}\n";
-        $content .= "Выбранные параметры:\n";
-
-        foreach ($application->featureItems as $item) {
-            $content .= "- {$item->feature->name}: {$item->name}\n";
-        }
-
-        $content .= "\nДополнительные заметки:\n{$application->notes}";
-
-        return response($content)
-            ->header('Content-Type', 'text/plain')
-            ->header('Content-Disposition', 'attachment; filename="application_'.$application->id.'.txt"');
     }
 
-    public function destroy($id)
+    public function destroy(Application $application)
     {
-        $application = Application::findOrFail($id);
-
-        // Проверка прав доступа
-        if ($application->user_id !== auth()->id()) {
-            abort(403);
-        }
-
         $application->delete();
-
         return redirect()->back()
-            ->with('success', 'Заявка успешно удалена');
+            ->with('success', 'Записка успешно удалена');
     }
 }

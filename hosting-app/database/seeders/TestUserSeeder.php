@@ -14,7 +14,7 @@ class TestUserSeeder extends Seeder
         \App\Models\User::create([
             'name' => 'Test User',
             'email' => 'test@example.com',
-            'password' => bcrypt('password'),
+            'password' => bcrypt('123'),
         ]);
     }
 }

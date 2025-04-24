@@ -1,27 +1,29 @@
 <?php
 
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\HomeController;
 
-Auth::routes(['register' => false]); // Отключаем публичную регистрацию если не нужно
+// Маршруты аутентификации
+Auth::routes(['register' => true]); // Для отключения регистрации измените на false
 
-// Группа для публичных маршрутов
-Route::middleware('guest')->group(function () {
-    Route::get('/', function () {
-        return view('welcome');
-    });
-});
+// Главная страница
+Route::get('/', function () {
+    return auth()->check()
+        ? redirect()->route('applications.index') // Исправлено имя маршрута
+        : view('welcome');
+})->name('home');
 
-// Группа защищенных маршрутов
-Route::middleware(['auth', 'verified'])->group(function () { // Добавляем проверку верификации email
-    Route::get('/applications', [ApplicationController::class, 'index'])->name('applications');
-    Route::get('/applications/create', [ApplicationController::class, 'create'])->name('applications.create');
-    Route::post('/applications', [ApplicationController::class, 'store'])->name('applications.store');
-    Route::delete('/applications/{id}', [ApplicationController::class, 'destroy'])->name('applications.destroy');
-    Route::get('/applications/{id}/download', [ApplicationController::class, 'download'])->name('applications.download');
+// Защищенные маршруты
+Route::middleware(['auth'])->group(function () {
+    // Ресурсный маршрут для ApplicationController
+    Route::resource('applications', ApplicationController::class)
+        ->except(['show']); // Убираем ненужный show
 
+    // Дополнительные специфические маршруты
+    Route::get('/applications/{application}/download', [ApplicationController::class, 'download'])
+        ->name('applications.download');
+
+    // Домашняя страница (если нужна)
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 });

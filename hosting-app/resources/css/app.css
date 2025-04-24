@@ -45,3 +45,12 @@
 .badge.bg-success { background: #d4edda; color: #155724; }
 .badge.bg-warning { background: #fff3cd; color: #856404; }
 .badge.bg-secondary { background: #f8f9fa; color: #6c757d; }
+
+.card {
+    border-radius: 0.8rem;
+}
+.form-check-input {
+    width: 1.2em;
+    height: 1.2em;
+    margin-top: 0.2em;
+}
