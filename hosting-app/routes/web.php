@@ -4,38 +4,24 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\HomeController;
 
-Auth::routes(['register' => true]);
+Auth::routes(['register' => false]); // Отключаем публичную регистрацию если не нужно
 
-Route::get('/', function () {
-    return view('welcome');
-});
-Route::get('/applications/create', [ApplicationController::class, 'create'])->name('applications.create');
-Route::post('/applications', [ApplicationController::class, 'store'])->name('applications.store');
-// Временный маршрут для автоматической авторизации тестового пользователя
-Route::get('/login-test-user', function () {
-    $user = User::firstOrCreate(
-        ['email' => 'test@example.com'],
-        [
-            'name' => 'Test User',
-            'password' => bcrypt('password')
-        ]
-    );
-    auth()->login($user);
-    return redirect('/applications/create');
+// Группа для публичных маршрутов
+Route::middleware('guest')->group(function () {
+    Route::get('/', function () {
+        return view('welcome');
+    });
 });
 
-Route::get('/applications/{id}/download', [ApplicationController::class, 'download'])
-    ->name('applications.download');
+// Группа защищенных маршрутов
+Route::middleware(['auth', 'verified'])->group(function () { // Добавляем проверку верификации email
+    Route::get('/applications', [ApplicationController::class, 'index'])->name('applications');
+    Route::get('/applications/create', [ApplicationController::class, 'create'])->name('applications.create');
+    Route::post('/applications', [ApplicationController::class, 'store'])->name('applications.store');
+    Route::delete('/applications/{id}', [ApplicationController::class, 'destroy'])->name('applications.destroy');
+    Route::get('/applications/{id}/download', [ApplicationController::class, 'download'])->name('applications.download');
 
-Route::get('/applications', [ApplicationController::class, 'index'])
-    ->middleware('auth')
-    ->name('applications');
-
-Route::delete('/applications/{id}', [ApplicationController::class, 'destroy'])
-    ->name('applications.destroy');
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+});

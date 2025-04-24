@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 
 class ApplicationController extends Controller
 {
+
+
     public function index()
     {
         $applications = Application::where('user_id', auth()->id())
