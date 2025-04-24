@@ -27,3 +27,4 @@ Route::middleware(['auth'])->group(function () {
     // Домашняя страница (если нужна)
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 });
+
