@@ -140,7 +140,7 @@
                             {{ Auth::user()->name }}
                         </a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{{ route('home') }}">Профиль</a>
+                            <a class="dropdown-item" href="{{ route('profile.show') }}">Профиль</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="dropdown-item">Выход</button>

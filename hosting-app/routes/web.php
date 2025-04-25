@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UnitApplicationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApplicationController;
@@ -17,18 +18,16 @@ Route::get('/', function () {
 
 // Защищенные маршруты
 Route::middleware(['auth'])->group(function () {
-    // Ресурсный маршрут для ApplicationController
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
     Route::resource('applications', ApplicationController::class)
-        ->except(['show']); // Убираем ненужный show
+        ->except(['show']);
 
-//    Route::get('/applications/my', [ApplicationController::class, 'myApplications'])
-//        ->name('applications.my');
 
-    // Дополнительные специфические маршруты
     Route::get('/applications/{application}/download', [ApplicationController::class, 'download'])
         ->name('applications.download');
 
-    // Домашняя страница (если нужна)
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::get('/applications/by-unit', [UnitApplicationController::class, 'index'])
