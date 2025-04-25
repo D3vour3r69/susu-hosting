@@ -128,9 +128,9 @@
                            href="{{ route('applications.index') }}">Мои записки</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('applications.by-unit') ? 'active' : '' }}"
-                           href="{{ route('applications.by-unit') }}">
-                            <i class="fas fa-building me-2"></i>По подразделениям
+                        <a class="nav-link {{ request()->routeIs('applications.unit-index') ? 'active' : '' }}"
+                           href="{{ route('applications.unit-index') }}">
+                            <i class="fas fa-building me-2"></i>Записки по подразделениям
                         </a>
                     </li>
                 </ul>

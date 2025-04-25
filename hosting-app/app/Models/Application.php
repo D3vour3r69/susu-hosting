@@ -18,7 +18,10 @@ class Application extends Model
     {
         return $this->belongsTo(User::class);
     }
-
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
+    }
     public function getFormattedCreatedAtAttribute()
     {
         return $this->created_at->format('d.m.Y H:i');

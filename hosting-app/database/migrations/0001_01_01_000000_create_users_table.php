@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('position')->default('Работник университета');
             $table->string('password');
             $table->unsignedBigInteger('external_id')->nullable();
             $table->rememberToken();

@@ -18,8 +18,16 @@ Route::get('/', function () {
 
 // Защищенные маршруты
 Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'show'])->name('profile.show');
+        Route::post('/units', [ProfileController::class, 'storeUnit'])->name('profile.units.store');
+        Route::put('/units/{unit}', [ProfileController::class, 'updateUnit'])->name('profile.units.update');
+        Route::delete('/units/{unit}', [ProfileController::class, 'destroyUnit'])->name('profile.units.destroy');
+    });
+
+
+
 
     Route::resource('applications', ApplicationController::class)
         ->except(['show']);
@@ -30,7 +38,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-    Route::get('/applications/by-unit', [UnitApplicationController::class, 'index'])
-        ->name('applications.by-unit');
+    Route::get('/applications/unit', [UnitApplicationController::class, 'index'])
+        ->name('applications.unit-index');
 });
 

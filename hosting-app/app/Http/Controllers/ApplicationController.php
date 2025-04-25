@@ -34,14 +34,21 @@ class ApplicationController extends Controller
 //
 //        return view('applications.unit-index', compact('applications', 'units', 'selectedUnitId'));
 //    }
-    public function index()
+    public function index(Request $request)
     {
-        $applications = Auth::user()->applications()
-            ->with(['featureItems.feature'])
-            ->latest()
-            ->get();
+        $units = Unit::with('head')->get();
+        $selectedUnitId = $request->input('unit_id');
 
-        return view('applications.index', compact('applications'));
+        $applications = Application::with(['user', 'unit'])
+            ->when($selectedUnitId, function($query) use ($selectedUnitId) {
+                $query->whereHas('unit', function($q) use ($selectedUnitId) {
+                    $q->where('id', $selectedUnitId);
+                });
+            })
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
+        return view('applications.by-unit', compact('applications', 'units', 'selectedUnitId'));
     }
 
     public function create()

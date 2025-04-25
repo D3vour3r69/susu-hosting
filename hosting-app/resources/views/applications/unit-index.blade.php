@@ -7,7 +7,7 @@
         <!-- Форма фильтрации -->
         <div class="card shadow-sm mb-4">
             <div class="card-body">
-                <form method="GET" action="{{ route('applications.by-unit') }}">
+                <form method="GET" action="{{ route('applications.unit-index') }}">
                     <div class="row g-3 align-items-center">
                         <div class="col-md-8">
                             <select name="unit_id" class="form-select">
@@ -46,11 +46,17 @@
                             <div class="list-group-item">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h5 class="mb-1">{{ $app->title }}</h5>
+                                        <h5 class="mb-1">Служебная записка #{{ $app->id }}</h5>
                                         <p class="mb-1">{{ Str::limit($app->notes, 100) }}</p>
                                         <small class="text-muted">
                                             Автор: {{ $app->user->name }} |
-                                            Подразделения: {{ $app->user->units->pluck('name')->join(', ') }}
+                                            Статус: <span class="badge bg-{{ $app->status === 'active' ? 'success' : ($app->status === 'completed' ? 'secondary' : 'warning') }}">{{ $app->status }}</span> |
+                                            Подразделение:
+                                            @if($app->unit)
+                                                <span class="badge bg-primary">{{ $app->unit->name }}</span>
+                                            @else
+                                                <span class="text-danger">Не указано</span>
+                                            @endif
                                         </small>
                                     </div>
                                     <div class="btn-group">
@@ -69,6 +75,13 @@
                                         @endcan
                                     </div>
                                 </div>
+                                @if($app->unit && $app->unit->head_id === $app->user_id)
+                                    <div class="mt-2">
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-crown me-1"></i>Руководитель подразделения
+                                        </span>
+                                    </div>
+                                @endif
                             </div>
                         @endforeach
                     </div>

@@ -54,3 +54,29 @@
     height: 1.2em;
     margin-top: 0.2em;
 }
+/* Кастомизация чекбоксов */
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Кастомизация бейджей */
+.badge {
+    font-size: 0.9em;
+    padding: 0.5em 0.75em;
+}
+
+.badge.bg-success {
+    background-color: #198754 !important;
+}
+
+/* Карточки подразделений */
+.unit-card {
+    transition: transform 0.2s;
+    border-left: 4px solid #0d6efd;
+}
+
+.unit-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+}

@@ -50,11 +50,16 @@ class User extends Authenticatable
 
     public function units(): BelongsToMany
     {
-        return $this->belongsToMany(Unit::class);
+        return $this->belongsToMany(Unit::class)->withPivot('position');
     }
-
+    public function managedUnits(): HasMany
+    {
+        return $this->hasMany(Unit::class, 'head_id');
+    }
     public function applications(): HasMany
     {
         return $this->hasMany(Application::class);
     }
+
+
 }
