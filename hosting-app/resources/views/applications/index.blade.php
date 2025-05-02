@@ -1,0 +1,79 @@
+@extends('layouts.app')
+
+@section('content')
+    <div class="container">
+        <h1 class="mb-4">Мои служебные записки</h1>
+
+        <a href="{{ route('applications.create') }}" class="btn btn-primary mb-4">
+            <i class="fas fa-plus-circle"></i> Создать новую
+        </a>
+
+        @forelse($applications as $application)
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                    <div>
+                    <span class="badge bg-{{ $application->status === 'active' ? 'success' : ($application->status === 'completed' ? 'secondary' : 'warning') }}">
+                        {{ $application->status }}
+                    </span>
+                        <small class="text-muted ms-2">
+                            {{ $application->created_at->format('d.m.Y H:i') }}
+                        </small>
+                    </div>
+                    <div>
+                        <a href="{{ route('applications.download', $application) }}"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-download"></i>
+                        </a>
+                        <form action="{{ route('applications.destroy', $application) }}"
+                              method="POST"
+                              class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <h5 class="card-title">Выбранные параметры:</h5>
+                    <div class="row">
+                        @foreach($application->featureItems->groupBy('feature_id') as $group)
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-header bg-light py-2">
+                                        <strong>{{ $group->first()->feature->name }}</strong>
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        @foreach($group as $item)
+                                            <li class="list-group-item">
+                                                {{ $item->name }}
+                                                @if($item->description)
+                                                    <small class="text-muted d-block mt-1">{{ $item->description }}</small>
+                                                @endif
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    @if($application->notes)
+                        <div class="mt-4">
+                            <h5>Комментарий:</h5>
+                            <div class="border p-3 rounded bg-light">
+                                {{ $application->notes }}
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @empty
+            <div class="alert alert-info">
+                У вас пока нет созданных записок
+            </div>
+        @endforelse
+    </div>
+@endsection

@@ -21,3 +21,8 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+.idea/
+vendor/
+node_modules/
+.idea
+public/assets/

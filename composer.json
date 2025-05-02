@@ -1,0 +1,6 @@
+{
+    "require": {
+        "laravel/ui": "^4.6",
+        "barryvdh/laravel-dompdf": "^3.1"
+    }
+}

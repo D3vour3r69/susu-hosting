@@ -15,10 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('position')->default('Работник университета');
             $table->string('password');
+            $table->unsignedBigInteger('external_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
+
+            $table->index('external_id'); // Индекс
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
