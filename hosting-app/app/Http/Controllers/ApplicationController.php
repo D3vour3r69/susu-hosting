@@ -70,39 +70,41 @@ class ApplicationController extends Controller
 
     public function store(Request $request)
     {
+        $user = auth()->user();
+
+        // Если подразделений нет → создаём временное (опционально)
+        if ($user->units->isEmpty()) {
+            $unit = Unit::firstOrCreate(['name' => 'Временное подразделение']);
+            $user->units()->attach($unit, ['position' => 'Временная должность']);
+        }
+
+        // Автоматический выбор подразделения
+        $unitId = $user->units->count() === 1
+            ? $user->units->first()->id
+            : $request->validate(['unit_id' => 'required|exists:units,id'])['unit_id'];
+
+
+
         $validated = $request->validate([
             'features' => 'required|array',
             'features.*' => 'required|exists:feature_items,id',
             'notes' => 'nullable|string|max:1000',
-            'status' => 'required|in:active,inactive,completed',
-            'unit_id' => 'required|exists:units,id'
+            'status' => 'required|in:active,inactive,completed'
         ]);
 
         try {
-            // Создание записки
             $application = Application::create([
-                'user_id' => auth()->id(),
+                'user_id' => $user->id,
+                'unit_id' => $unitId,
                 'notes' => $validated['notes'],
                 'status' => $validated['status']
             ]);
 
-            // Привязка выбранных параметров
-            $application->featureItems()->sync(
-                collect($validated['features'])->values()->all()
-            );
-
-            return redirect()->route('applications.index')
-                ->with([
-                    'success' => 'Записка успешно создана!',
-                    'application_id' => $application->id
-                ]);
-
+            $application->featureItems()->sync($validated['features']);
+            return redirect()->route('applications.index')->with('success', 'Записка создана!');
         } catch (\Exception $e) {
-            // Логирование ошибки
-            \Log::error('Ошибка создания записки: ' . $e->getMessage());
-
-            return back()->withInput()
-                ->withErrors(['error' => 'Ошибка создания. Попробуйте позже.']);
+            \Log::error('Ошибка: ' . $e->getMessage());
+            return back()->withInput()->withErrors(['error' => 'Ошибка создания.']);
         }
     }
 

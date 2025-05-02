@@ -67,25 +67,12 @@
                             </div>
                         @endif
 
-                        <!-- Форма добавления с CSS-переключением -->
                         <!-- Форма добавления -->
-                        <div class="card border-primary mt-3">
+                        <div class="card border-primary">
                             <div class="card-header bg-light">
-                                <label class="cursor-pointer d-flex align-items-center gap-2 mb-0">
-                                    <input
-                                        type="checkbox"
-                                        class="form-check-input m-0"
-                                        id="toggleForm"
-                                        autocomplete="off"
-                                    >
-{{--                                    <span class="fs-6">--}}
-{{--                                        <i class="fas fa-plus me-1"></i>Добавить подразделение--}}
-{{--                                    </span>--}}
-                                </label>
+                                Добавить подразделение
                             </div>
-
-                            <!-- Скрытый контент -->
-                            <div class="card-body" id="formContent">
+                            <div class="card-body">
                                 <form action="{{ route('profile.units.store') }}" method="POST">
                                     @csrf
                                     <div class="row g-3">
@@ -123,8 +110,8 @@
                                         </div>
 
                                         <div class="col-12">
-                                            <button type="submit" class="btn btn-primary w-100">
-                                                <i class="fas fa-save me-2"></i>Сохранить
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-plus me-2"></i>Добавить
                                             </button>
                                         </div>
                                     </div>
@@ -136,39 +123,4 @@
             </div>
         </div>
     </div>
-
-{{--    <style>--}}
-{{--        /* Стили для переключения формы */--}}
-{{--        #toggleForm {--}}
-{{--            display: none;--}}
-{{--        }--}}
-
-{{--        .collapse {--}}
-{{--            display: none;--}}
-{{--            opacity: 0;--}}
-{{--            transition: opacity 0.3s ease-in-out;--}}
-{{--        }--}}
-
-{{--        #toggleForm:checked ~ .card-body {--}}
-{{--            display: block;--}}
-{{--            opacity: 1;--}}
-{{--        }--}}
-
-{{--        .cursor-pointer {--}}
-{{--            cursor: pointer;--}}
-{{--        }--}}
-
-{{--        /* Плавное появление */--}}
-{{--        .card-body {--}}
-{{--            overflow: hidden;--}}
-{{--            max-height: 0;--}}
-{{--            transition: max-height 0.3s ease-in-out;--}}
-{{--        }--}}
-
-{{--        #toggleForm:checked ~ .card-body {--}}
-{{--            max-height: 500px;--}}
-{{--        }--}}
-{{--    </style>--}}
 @endsection
-
-

@@ -23,7 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'external_id'
+        'external_id',
+        'unit_id'
     ];
 
     /**
@@ -48,9 +49,10 @@ class User extends Authenticatable
         ];
     }
 
-    public function units(): BelongsToMany
+    public function units() : BelongsToMany
     {
-        return $this->belongsToMany(Unit::class)->withPivot('position');
+        return $this->belongsToMany(Unit::class, 'unit_user')
+            ->withPivot('position');
     }
     public function managedUnits(): HasMany
     {

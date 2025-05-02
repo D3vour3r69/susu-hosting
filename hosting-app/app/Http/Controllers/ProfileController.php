@@ -49,37 +49,34 @@ class ProfileController extends Controller
     {
         $request->validate([
             'unit_id' => 'required|exists:units,id',
-            'role' => 'required|in:member,head'
+            'position' => 'required|string|max:50',
+            'is_head' => 'sometimes|boolean'
         ]);
 
-        try {
-            DB::beginTransaction();
-
-            // Добавляем в подразделение
-            auth()->user()->units()->attach($request->unit_id, [
-                'position' => $request->role === 'head' ? 'Руководитель' : 'Сотрудник'
-            ]);
-
-            // Если выбрана роль руководителя
-            if ($request->role === 'head') {
-                Unit::where('id', $request->unit_id)->update([
-                    'head_id' => auth()->id()
-                ]);
-            }
-
-            DB::commit();
-
-            return redirect()->route('profile.show')->with('success', 'Подразделение добавлено!');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->withErrors(['error' => 'Ошибка при сохранении: ' . $e->getMessage()]);
+        // Проверка на дубликат
+        if ($request->user()->units()->where('unit_id', $request->unit_id)->exists()) {
+            return back()->withErrors(['error' => 'Это подразделение уже добавлено!']);
         }
+
+        // Привязка подразделения
+        $request->user()->units()->attach($request->unit_id, [
+            'position' => $request->position
+        ]);
+
+        // Если отмечен руководитель
+        if ($request->has('is_head')) {
+            Unit::where('id', $request->unit_id)->update([
+                'head_id' => $request->user()->id
+            ]);
+        }
+
+        return back()->with('success', 'Подразделение успешно добавлено!');
     }
 
     public function updateUnit(Request $request, Unit $unit)
     {
         $request->validate([
+            'unit_id' => 'required|exists:units,id',
             'position' => 'required|in:head,member'
         ]);
 
@@ -87,7 +84,7 @@ class ProfileController extends Controller
             'position' => $request->position
         ]);
 
-        return back()->with('success', 'Роль обновлена');
+        return back()->with('success', 'Подразделение добавлено!');
     }
 
     public function destroyUnit(Unit $unit)

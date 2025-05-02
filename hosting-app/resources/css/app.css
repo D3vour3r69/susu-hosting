@@ -80,3 +80,24 @@
     transform: translateY(-3px);
     box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
 }
+
+/* Кастомизация бейджей */
+.badge-role {
+    border: 1px solid #dee2e6;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.card-body {
+    transition: opacity 0.3s, max-height 0.3s;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+}
+
+#toggleForm:checked ~ .card-body {
+    opacity: 1;
+    max-height: 500px;
+}
+
+

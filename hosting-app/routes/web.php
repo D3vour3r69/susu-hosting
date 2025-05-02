@@ -30,7 +30,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::resource('applications', ApplicationController::class)
-        ->except(['show']);
+        ->except(['show', 'edit', 'update']);
 
 
     Route::get('/applications/{application}/download', [ApplicationController::class, 'download'])
