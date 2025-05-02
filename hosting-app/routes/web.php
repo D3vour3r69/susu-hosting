@@ -38,7 +38,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-    Route::get('/applications/unit', [UnitApplicationController::class, 'index'])
+    Route::get('/applications/unit', [ApplicationController::class, 'unitIndex'])
         ->name('applications.unit-index');
 });
 

@@ -18,6 +18,22 @@ class ApplicationController extends Controller
         $this->authorizeResource(Application::class, 'application');
     }
 
+    public function unitIndex(Request $request)
+    {
+        $units = Unit::with('head')->get();
+        $selectedUnitId = $request->input('unit_id');
+
+        $applications = Application::with(['user', 'unit'])
+            ->when($selectedUnitId, function($query) use ($selectedUnitId) {
+                $query->whereHas('unit', function($q) use ($selectedUnitId) {
+                    $q->where('id', $selectedUnitId);
+                });
+            })
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
+        return view('applications.unit-index', compact('applications', 'units', 'selectedUnitId'));
+    }
 //    public function index(Request $request)
 //    {
 //        $units = Unit::all();
@@ -34,22 +50,17 @@ class ApplicationController extends Controller
 //
 //        return view('applications.unit-index', compact('applications', 'units', 'selectedUnitId'));
 //    }
-    public function index(Request $request)
+    public function index()
     {
-        $units = Unit::with('head')->get();
-        $selectedUnitId = $request->input('unit_id');
+        $applications = Auth::user()
+            ->applications()
+            ->with(['featureItems.feature', 'unit'])
+            ->latest()
+            ->get();
 
-        $applications = Application::with(['user', 'unit'])
-            ->when($selectedUnitId, function($query) use ($selectedUnitId) {
-                $query->whereHas('unit', function($q) use ($selectedUnitId) {
-                    $q->where('id', $selectedUnitId);
-                });
-            })
-            ->orderByDesc('created_at')
-            ->paginate(10);
-
-        return view('applications.by-unit', compact('applications', 'units', 'selectedUnitId'));
+        return view('applications.index', compact('applications'));
     }
+
 
     public function create()
     {
@@ -63,7 +74,8 @@ class ApplicationController extends Controller
             'features' => 'required|array',
             'features.*' => 'required|exists:feature_items,id',
             'notes' => 'nullable|string|max:1000',
-            'status' => 'required|in:active,inactive,completed'
+            'status' => 'required|in:active,inactive,completed',
+            'unit_id' => 'required|exists:units,id'
         ]);
 
         try {
