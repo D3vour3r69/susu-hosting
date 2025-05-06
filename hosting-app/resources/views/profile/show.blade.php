@@ -28,7 +28,7 @@
 
                 <!-- Блок подразделений -->
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-12">
                         <h5 class="border-bottom pb-2 mb-3">
                             <i class="fas fa-building"></i> Подразделения
                         </h5>
@@ -72,12 +72,8 @@
                         <div class="card border-primary mt-3">
                             <div class="card-header bg-light">
                                 <label class="cursor-pointer d-flex align-items-center gap-2 mb-0">
-                                    <input
-                                        type="checkbox"
-                                        class="form-check-input m-0"
-                                        id="toggleForm"
-                                        autocomplete="off"
-                                    >
+                                    Добавьте подразделение для пользователя
+
 {{--                                    <span class="fs-6">--}}
 {{--                                        <i class="fas fa-plus me-1"></i>Добавить подразделение--}}
 {{--                                    </span>--}}
@@ -111,10 +107,10 @@
                                         <div class="col-md-2">
                                             <div class="form-check">
                                                 <input
-                                                    class="form-check-input"
                                                     type="checkbox"
-                                                    name="is_head"
-                                                    id="isHead"
+                                                    class="form-check-input m-0"
+                                                    id="toggleForm"
+                                                    autocomplete="off"
                                                 >
                                                 <label class="form-check-label" for="isHead">
                                                     Руководитель
