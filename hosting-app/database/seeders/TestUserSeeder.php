@@ -59,7 +59,7 @@ class TestUserSeeder extends Seeder
         foreach ($users as $user) {
             $role = $user['role']; // Беру role в переменную
             unset($user['role']); // Убираю role с массива
-            //Немного подумал что странно создавать сидер на админа отдельно
+            //Немного подумал что странно создавать сидер на 1 админа отдельно
             // поэтому сделал через массив и убрал на добавление так как внизу в параметр передаётся весь массив. А role в таблице нет
             $user_roled = User::firstOrCreate(
                 ['name' => $user['name']],
@@ -67,7 +67,6 @@ class TestUserSeeder extends Seeder
             );
             $user_roled->assignRole($role);
         }
-
         $this->command->info('Создано ' . count($users) . ' пользователей');
     }
 }

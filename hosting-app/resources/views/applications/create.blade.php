@@ -64,26 +64,26 @@
                                     </div>
                                 @endforeach
                             </div>
-                            @if(auth()->user()->units->count() > 1)
-                                <div class="mb-3">
-                                    <label class="form-label">Выберите подразделение:</label>
-                                    <select name="unit_id" class="form-select" required>
-                                        @foreach(auth()->user()->units as $unit)
-                                            <option value="{{ $unit->id }}">
-                                                {{ $unit->name }}
-                                                ({{ $unit->pivot->position }})
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            @else
-                                <input type="hidden" name="unit_id" value="{{ auth()->user()->units->first()->id }}">
-                            @endif
                         </div>
                     @endforeach
 
                     <!-- Дополнительные поля -->
                     <div class="mt-4">
+                        @if(auth()->user()->units->count() > 1)
+                            <div class="mb-3">
+                                <label class="form-label">Выберите подразделение:</label>
+                                <select name="unit_id" class="form-select" required>
+                                    @foreach(auth()->user()->units as $unit)
+                                        <option value="{{ $unit->id }}">
+                                            {{ $unit->name }}
+                                            ({{ $unit->pivot->position }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @else
+                            <input type="hidden" name="unit_id" value="{{ auth()->user()->units->first()->id }}">
+                        @endif
                         <div class="mb-3">
                             <label for="notes" class="form-label">Комментарий</label>
                             <textarea class="form-control"
