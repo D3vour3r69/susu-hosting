@@ -72,13 +72,13 @@ class ApplicationController extends Controller
     {
         $user = auth()->user();
 
-        // Если подразделений нет → создаём временное (опционально)
+
         if ($user->units->isEmpty()) {
             $unit = Unit::firstOrCreate(['name' => 'Временное подразделение']);
             $user->units()->attach($unit, ['position' => 'Временная должность']);
         }
 
-        // Автоматический выбор подразделения
+
         $unitId = $user->units->count() === 1
             ? $user->units->first()->id
             : $request->validate(['unit_id' => 'required|exists:units,id'])['unit_id'];
