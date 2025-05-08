@@ -25,7 +25,6 @@ class User extends Authenticatable
         'email',
         'password',
         'external_id',
-        'unit_id'
     ];
 
     /**
@@ -49,16 +48,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-    public function units() : BelongsToMany
-    {
-        return $this->belongsToMany(Unit::class, 'unit_user')
-            ->withPivot('position');
-    }
-    public function managedUnits(): HasMany
-    {
+    public function managedUnits() {
         return $this->hasMany(Unit::class, 'head_id');
     }
+
+    public function positions(): BelongsToMany
+    {
+        return $this->belongsToMany(Position::class)
+            ->withTimestamps();
+    }
+
     public function applications(): HasMany
     {
         return $this->hasMany(Application::class);

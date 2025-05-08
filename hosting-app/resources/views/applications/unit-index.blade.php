@@ -48,7 +48,7 @@
                                     <div>
                                         <h5 class="mb-1">Служебная записка #{{ $app->id }}</h5>
                                         <p class="mb-1">{{ Str::limit($app->notes, 100) }}</p>
-                                        <small class="text-muted">
+                                        <small class="text">
                                             Автор: {{ $app->user->name }} |
                                             Статус: <span class="badge bg-{{ $app->status === 'active' ? 'success' : ($app->status === 'completed' ? 'secondary' : 'warning') }}">{{ $app->status }}</span> |
                                             Подразделение:
@@ -57,6 +57,14 @@
                                             @else
                                                 <span class="text-danger">Не указано</span>
                                             @endif
+                                            @if($app->unit && $app->unit->head_id === $app->user_id)
+
+                                                <span class="badge bg-warning">
+                                                    <i class="fas fa-crown me-1"></i>Руководитель подразделения
+                                                </span>
+
+                                            @endif
+                                            Дата создания: {{ $app->created_at }}
                                         </small>
                                     </div>
                                     <div class="btn-group">
@@ -75,13 +83,6 @@
                                         @endcan
                                     </div>
                                 </div>
-                                @if($app->unit && $app->unit->head_id === $app->user_id)
-                                    <div class="mt-2">
-                                        <span class="badge bg-warning">
-                                            <i class="fas fa-crown me-1"></i>Руководитель подразделения
-                                        </span>
-                                    </div>
-                                @endif
                             </div>
                         @endforeach
                     </div>

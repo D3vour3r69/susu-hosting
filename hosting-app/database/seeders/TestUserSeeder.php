@@ -53,6 +53,18 @@ class TestUserSeeder extends Seeder
                 'password' => bcrypt('123'),
                 'role' => 'admin', // Для теста отдельная роль, чтобы каждый раз не создавать админа руками.
             ],
+            [
+                'name' => 'Райян Гослинг Александрович',
+                'email' => 'DaNeUmerOnVKontseDraiva@example.com',
+                'password' => bcrypt('123'),
+                'role' => 'user_head', // Для теста отдельная роль, чтобы каждый раз не создавать админа руками.
+            ],
+            [
+                'name' => 'Пророк Санбой',
+                'email' => 'prorok@example.com',
+                'password' => bcrypt('123'),
+                'role' => 'user_head', // Для теста отдельная роль, чтобы каждый раз не создавать админа руками.
+            ],
 
         ];
 

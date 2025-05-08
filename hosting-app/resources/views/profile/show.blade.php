@@ -79,7 +79,6 @@
 {{--                                    </span>--}}
                                 </label>
                             </div>
-
                             <!-- Скрытый контент -->
                             <div class="card-body" id="formContent">
                                 <form action="{{ route('profile.units.store') }}" method="POST">
@@ -133,38 +132,38 @@
         </div>
     </div>
 
-{{--    <style>--}}
-{{--        /* Стили для переключения формы */--}}
-{{--        #toggleForm {--}}
-{{--            display: none;--}}
-{{--        }--}}
+    <style>
+        /* Стили для переключения формы */
+        /*#toggleForm {*/
+        /*    display: none;*/
+        /*}*/
 
-{{--        .collapse {--}}
-{{--            display: none;--}}
-{{--            opacity: 0;--}}
-{{--            transition: opacity 0.3s ease-in-out;--}}
-{{--        }--}}
+        .collapse {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
 
-{{--        #toggleForm:checked ~ .card-body {--}}
-{{--            display: block;--}}
-{{--            opacity: 1;--}}
-{{--        }--}}
+        #toggleForm:checked ~ .card-body {
+            display: block;
+            opacity: 1;
+        }
 
-{{--        .cursor-pointer {--}}
-{{--            cursor: pointer;--}}
-{{--        }--}}
+        .cursor-pointer {
+            cursor: pointer;
+        }
 
-{{--        /* Плавное появление */--}}
-{{--        .card-body {--}}
-{{--            overflow: hidden;--}}
-{{--            max-height: 0;--}}
-{{--            transition: max-height 0.3s ease-in-out;--}}
-{{--        }--}}
+        /* Плавное появление */
+        /*.card-body {*/
+        /*    overflow: hidden;*/
+        /*    max-height: 0;*/
+        /*    transition: max-height 0.3s ease-in-out;*/
+        /*}*/
 
-{{--        #toggleForm:checked ~ .card-body {--}}
-{{--            max-height: 500px;--}}
-{{--        }--}}
-{{--    </style>--}}
+        #toggleForm:checked ~ .card-body {
+            max-height: 500px;
+        }
+    </style>
 @endsection
 
 

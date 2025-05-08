@@ -19,7 +19,7 @@ class UnitSeeder extends Seeder
 
             ],
             [
-                'name' => 'Отдел по базам данных',
+                'name' => 'Сектор экономики',
                 'head_id' => '3',
             ],
             [
@@ -30,7 +30,14 @@ class UnitSeeder extends Seeder
                 'name' => 'DevOps отдел',
                 'head_id' => '4',
             ],
-
+            [
+                'name' => 'Отдел аналитиков',
+                'head_id' => '5',
+            ],
+            [
+                'name'=>'Отдел менеджмента',
+                'head_id' =>'6',
+            ],
         ];
 
         foreach ($units as $unit) {

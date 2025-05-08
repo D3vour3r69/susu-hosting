@@ -17,16 +17,18 @@ class Unit extends Model
         return $this->belongsTo(User::class, 'head_id');
     }
 
-    public function users()
-    {
-        return $this->belongsToMany(User::class)->withPivot('position');
-    }
 
 
-    public function isHeadMember(User $user)
+    public function positions()
     {
-        return $this->users->contains($user->id);
+        return $this->hasMany(Position::class);
     }
+
+    public function isHeadMember(User $user): bool
+    {
+        return $this->head_id === $user->id;
+    }
+
 
     public function applications()
     {
