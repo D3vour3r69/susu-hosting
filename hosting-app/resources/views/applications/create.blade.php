@@ -69,20 +69,21 @@
 
                     <!-- Дополнительные поля -->
                     <div class="mt-4">
-                        @if(auth()->user()->units->count() > 1)
-                            <div class="mb-3">
-                                <label class="form-label">Выберите подразделение:</label>
-                                <select name="unit_id" class="form-select" required>
-                                    @foreach(auth()->user()->units as $unit)
-                                        <option value="{{ $unit->id }}">
-                                            {{ $unit->name }}
-                                            ({{ $unit->pivot->position }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        @else
-                            <input type="hidden" name="unit_id" value="{{ auth()->user()->units->first()->id }}">
+                        @if($userUnits = auth()->user()->positions->pluck('unit')->unique())
+                            @if($userUnits->count() > 1)
+                                <div class="mb-3">
+                                    <label class="form-label">Выберите подразделение:</label>
+                                    <select name="unit_id" class="form-select" required>
+                                        @foreach($userUnits as $unit)
+                                            <option value="{{ $unit->id }}">
+                                                {{ $unit->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @else
+                                <input type="hidden" name="unit_id" value="{{$userUnits->first()->id }}">
+                            @endif
                         @endif
                         <div class="mb-3">
                             <label for="notes" class="form-label">Комментарий</label>

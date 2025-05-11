@@ -71,20 +71,20 @@ class ApplicationController extends Controller
     public function store(Request $request)
     {
         $user = auth()->user();
-
-
-        if ($user->units->isEmpty()) {
-            $unit = Unit::firstOrCreate(['name' => 'Временное подразделение']);
-            $user->units()->attach($unit, ['position' => 'Временная должность']);
+//        if ($user->positions->doesntExist()) {
+//            $unit = Unit::firstOrCreate(['name' => 'Временное подразделение']);
+//            $user->units()->attach($unit, ['position' => 'Временная должность']);
+//        }
+        $userUnits = $user->positions->pluck('unit')->unique();
+        if ($userUnits->count() === 1)
+        {
+            $unitId = $userUnits->first()->id;
         }
-
-
-        $unitId = $user->units->count() === 1
-            ? $user->units->first()->id
-            : $request->validate(['unit_id' => 'required|exists:units,id'])['unit_id'];
-
-
-
+        else
+        {
+            $validatedUnit = $request->validate(['unit_id' => 'required|exists:units,id']);
+            $unitId = $validatedUnit['unit_id'];
+        }
         $validated = $request->validate([
             'features' => 'required|array',
             'features.*' => 'required|exists:feature_items,id',

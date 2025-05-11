@@ -52,7 +52,7 @@ class User extends Authenticatable
         return $this->hasMany(Unit::class, 'head_id');
     }
 
-    public function positions(): BelongsToMany
+    public function positions()
     {
         return $this->belongsToMany(Position::class)
             ->withTimestamps();
