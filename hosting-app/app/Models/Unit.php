@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Unit extends Model
 {
@@ -17,7 +18,12 @@ class Unit extends Model
         return $this->belongsTo(User::class, 'head_id');
     }
 
-
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'positions')
+            ->using(Position::class)
+            ->withPivot('name');
+    }
 
     public function positions()
     {

@@ -13,49 +13,48 @@ class ProfileController extends Controller
 {
     public function show()
     {
-        $user = Auth::user()->load([
-            'positions.unit',
-            'managedUnits'
-        ]);
+        $user = Auth::user()->load('positions.unit');
 
-        $units = Unit::with('positions')->get();
+        // Получаем ID подразделений, которые уже есть у пользователя
+        $attachedUnitIds = $user->positions->pluck('unit.id')->toArray();
 
-        return view('profile.show', [
-            'user' => $user,
-            'units' => $units
-        ]);
+        // Фильтруем подразделения, исключая привязанные
+        $availableUnits = Unit::whereNotIn('id', $attachedUnitIds)
+            ->with('positions')
+            ->get();
+
+        return view('profile.show', compact('user', 'availableUnits'));
     }
 
     public function storePosition(Request $request)
     {
         $request->validate([
             'unit_id' => 'required|exists:units,id',
-            'position_id' => [
-                'required',
-                'exists:positions,id',
-                Rule::unique('position_user')->where('user_id', auth()->id())
-            ],
+            'position_name' => 'required|string|max:255', // Поле для названия должности
             'is_head' => 'sometimes|boolean'
         ]);
 
-        // Привязка позиции
-        auth()->user()->positions()->attach($request->position_id);
+        // Создаем или находим должность в выбранном подразделении
+        $position = Position::firstOrCreate([
+            'unit_id' => $request->unit_id,
+            'name' => $request->position_name
+        ]);
 
-        // Назначение руководителем подразделения
-        if ($request->has('is_head')) {
-            $unit = Unit::find($request->unit_id);
-            $unit->update(['head_id' => auth()->id()]);
-
-            // Добавляем позицию руководителя если нужно
-            $headPosition = Position::firstOrCreate([
-                'name' => 'Руководитель',
-                'unit_id' => $unit->id
-            ]);
-
-            auth()->user()->positions()->attach($headPosition->id);
+        // Проверяем, не привязана ли уже эта должность к пользователю
+        if (auth()->user()->positions()->where('position_id', $position->id)->exists()) {
+            return back()->withErrors(['position_name' => 'Эта должность уже привязана']);
         }
 
-        return back()->with('success', 'Должность успешно добавлена!');
+        // Привязываем должность
+        auth()->user()->positions()->attach($position->id);
+
+        // Назначение руководителем (если выбрано)
+        if ($request->is_head) {
+            $unit = Unit::find($request->unit_id);
+            $unit->update(['head_id' => auth()->id()]);
+        }
+
+        return back()->with('success', 'Должность добавлена!');
     }
 
     public function updateHeadStatus(Request $request, Unit $unit)
@@ -63,22 +62,11 @@ class ProfileController extends Controller
         $request->validate(['is_head' => 'required|boolean']);
 
         if ($request->is_head) {
+            // Назначение руководителем
             $unit->update(['head_id' => auth()->id()]);
-            $position = Position::firstOrCreate([
-                'name' => 'Руководитель',
-                'unit_id' => $unit->id
-            ]);
-            auth()->user()->positions()->syncWithoutDetaching([$position->id]);
         } else {
+            // Снятие статуса
             $unit->update(['head_id' => null]);
-            $position = Position::where([
-                'name' => 'Руководитель',
-                'unit_id' => $unit->id
-            ])->first();
-
-            if ($position) {
-                auth()->user()->positions()->detach($position->id);
-            }
         }
 
         return back()->with('success', 'Статус руководителя обновлен');
@@ -86,11 +74,14 @@ class ProfileController extends Controller
 
     public function destroyPosition(Position $position)
     {
-        // Проверка что пользователь не является руководителем
-        if ($position->unit->head_id === auth()->id()) {
-            $position->unit->update(['head_id' => null]);
+        $unit = $position->unit;
+
+        // Если пользователь - руководитель этого подразделения, снимаем статус
+        if ($unit->head_id === auth()->id()) {
+            $unit->update(['head_id' => null]);
         }
 
+        // Удаляем связь с должностью
         auth()->user()->positions()->detach($position->id);
 
         return back()->with('success', 'Должность удалена');
@@ -98,9 +89,7 @@ class ProfileController extends Controller
 
     protected function userCanManageUnits(): bool
     {
-        return auth()->user()->hasRole('admin') ||
-            auth()->user()->positions()
-                ->whereHas('unit', fn($q) => $q->where('head_id', auth()->id()))
-                ->exists();
+        return auth()->user()->hasRole('admin')
+            || auth()->user()->managedUnits()->exists();
     }
 }

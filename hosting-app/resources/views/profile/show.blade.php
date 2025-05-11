@@ -33,24 +33,32 @@
                             <i class="fas fa-building"></i> Подразделения
                         </h5>
 
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                @foreach ($errors->all() as $error)
+                                    <p class="mb-0">{{ $error }}</p>
+                                @endforeach
+                            </div>
+                        @endif
+
                         <!-- Список подразделений -->
-                        @if($user->units->isNotEmpty())
+                        @if($user->positions->isNotEmpty())
                             <div class="mb-4">
-                                @foreach($user->units as $unit)
+                                @foreach($user->positions as $position)
                                     <div class="card mb-2">
                                         <div class="card-body d-flex justify-content-between align-items-center">
                                             <div>
                                                 <h6 class="mb-0">
-                                                    {{ $unit->name }}
-                                                    @if($unit->head_id === $user->id)
+                                                    {{ $position->unit->name }}
+                                                    @if($position->unit->head_id === $user->id)
                                                         <span class="badge bg-warning ms-2">
                                                         <i class="fas fa-crown"></i> Руководитель
                                                     </span>
                                                     @endif
                                                 </h6>
-                                                <small class="text-muted">{{ $unit->pivot->position }}</small>
+                                                <small class="text-muted">{{ $position->name }}</small>
                                             </div>
-                                            <form action="{{ route('profile.units.destroy', $unit) }}" method="POST">
+                                            <form action="{{ route('profile.positions.destroy', $position) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-sm btn-danger">
@@ -81,7 +89,7 @@
                             </div>
                             <!-- Скрытый контент -->
                             <div class="card-body" id="formContent">
-                                <form action="{{ route('profile.units.store') }}" method="POST">
+                                <form action="{{ route('profile.positions.store') }}" method="POST">
                                     @csrf
                                     <div class="row g-3">
                                         <div class="col-md-6">
@@ -96,7 +104,7 @@
                                         <div class="col-md-4">
                                             <input
                                                 type="text"
-                                                name="position"
+                                                name="position_name"
                                                 class="form-control"
                                                 placeholder="Должность"
                                                 required
@@ -108,7 +116,9 @@
                                                 <input
                                                     type="checkbox"
                                                     class="form-check-input m-0"
-                                                    id="toggleForm"
+                                                    id="isHead"
+                                                    name="is_head"
+                                                    value="1"
                                                     autocomplete="off"
                                                 >
                                                 <label class="form-check-label" for="isHead">
@@ -132,38 +142,38 @@
         </div>
     </div>
 
-    <style>
-        /* Стили для переключения формы */
-        /*#toggleForm {*/
-        /*    display: none;*/
-        /*}*/
+{{--    <style>--}}
+{{--        /* Стили для переключения формы */--}}
+{{--        /*#toggleForm {*/--}}
+{{--        /*    display: none;*/--}}
+{{--        /*}*/--}}
 
-        .collapse {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-        }
+{{--        .collapse {--}}
+{{--            display: none;--}}
+{{--            opacity: 0;--}}
+{{--            transition: opacity 0.3s ease-in-out;--}}
+{{--        }--}}
 
-        #toggleForm:checked ~ .card-body {
-            display: block;
-            opacity: 1;
-        }
+{{--        #toggleForm:checked ~ .card-body {--}}
+{{--            display: block;--}}
+{{--            opacity: 1;--}}
+{{--        }--}}
 
-        .cursor-pointer {
-            cursor: pointer;
-        }
+{{--        .cursor-pointer {--}}
+{{--            cursor: pointer;--}}
+{{--        }--}}
 
-        /* Плавное появление */
-        /*.card-body {*/
-        /*    overflow: hidden;*/
-        /*    max-height: 0;*/
-        /*    transition: max-height 0.3s ease-in-out;*/
-        /*}*/
+{{--        /* Плавное появление */--}}
+{{--        /*.card-body {*/--}}
+{{--        /*    overflow: hidden;*/--}}
+{{--        /*    max-height: 0;*/--}}
+{{--        /*    transition: max-height 0.3s ease-in-out;*/--}}
+{{--        /*}*/--}}
 
-        #toggleForm:checked ~ .card-body {
-            max-height: 500px;
-        }
-    </style>
+{{--        #toggleForm:checked ~ .card-body {--}}
+{{--            max-height: 500px;--}}
+{{--        }--}}
+{{--    </style>--}}
 @endsection
 
 

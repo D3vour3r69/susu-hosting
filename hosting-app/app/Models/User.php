@@ -63,5 +63,11 @@ class User extends Authenticatable
         return $this->hasMany(Application::class);
     }
 
+    public function units()
+    {
+        return $this->belongsToMany(Unit::class, 'positions', 'unit_id', 'id')
+            ->using(Position::class)
+            ->withPivot('name');
+    }
 
 }
