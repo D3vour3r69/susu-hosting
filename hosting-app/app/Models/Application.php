@@ -12,7 +12,9 @@ class Application extends Model
         'user_id',
         'unit_id',
         'notes',
-        'status'
+        'status',
+        'approved',
+        'approved_at'
     ];
     public function user()
     {

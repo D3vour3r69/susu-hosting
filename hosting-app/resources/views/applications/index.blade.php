@@ -2,16 +2,76 @@
 
 @section('content')
     <div class="container">
-        <h1 class="mb-4">Мои служебные записки</h1>
-
-        <a href="{{ route('applications.create') }}" class="btn btn-primary mb-4">
-            <i class="fas fa-plus-circle"></i> Создать новую
-        </a>
-
+        @if (auth()->user()->hasRole('admin'))
+            <h1 class="mb-4">Записки для рассмотрения</h1>
+        @else
+            <h1 class="mb-4">Мои служебные записки</h1>
+        @endif
+            @if (!auth()->user()->hasRole('admin'))
+                <a href="{{ route('applications.create') }}" class="btn btn-primary mb-4">
+                    <i class="fas fa-plus-circle"></i> Создать новую
+                </a>
+            @endif
         @forelse($applications as $application)
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>Заявка #{{ $application->id }}</h5>
+                        <div class="btn-group">
+                            @if(auth()->user()->hasRole('admin'))
+                                <form action="{{ route('applications.approve', $application) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="fas fa-check"></i> Одобрить
+                                    </button>
+                                </form>
+                                <form action="{{ route('applications.reject', $application) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-times"></i> Отклонить
+                                    </button>
+                                </form>
+                            @endif
+
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal-{{ $application->id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Модальное окно удаления -->
+                    <div class="modal fade" id="deleteModal-{{ $application->id }}">
+                        @foreach($applications as $application)
+                            <div class="modal fade" id="deleteModal-{{ $application->id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Подтверждение удаления</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Вы уверены, что хотите удалить заявку #{{ $application->id }}?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                            <form action="{{ route('applications.destroy', $application) }}" method="POST">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="btn btn-danger">Удалить</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
             <div class="card mb-4 shadow-sm">
+
                 <div class="card-header d-flex justify-content-between align-items-center bg-light">
                     <div>
+
                     <span class="badge bg-{{ $application->status === 'active' ? 'success' : ($application->status === 'completed' ? 'secondary' : 'warning') }}">
                         {{ $application->status }}
                     </span>
@@ -21,6 +81,7 @@
                     </div>
                     <div>
                         <a href="{{ route('applications.download', $application) }}"
+
                            class="btn btn-sm btn-outline-primary">
                             <i class="fas fa-download"></i>
                         </a>

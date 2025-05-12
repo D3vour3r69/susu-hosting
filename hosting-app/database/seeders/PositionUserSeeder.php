@@ -15,30 +15,42 @@ class PositionUserSeeder extends Seeder
      */
     public function run(): void
     {
-        $units = Unit::all();
+        $units = Unit::with('head')->get();
+        $headPositions = [];
 
+        // 1. Создаем позиции руководителей для каждого подразделения
         foreach ($units as $unit) {
-            $headPosition = Position::firstOrCreate([
-                'name' => 'Начальник отдела',
-                'unit_id' => $unit->id // Привязываем к подразделению
-            ]);
+            $headPosition = Position::firstOrCreate(
+                ['name' => 'Начальник отдела', 'unit_id' => $unit->id],
+                ['name' => 'Начальник отдела', 'unit_id' => $unit->id]
+            );
 
-            // Назначаем должность руководителю подразделения
+            $headPositions[] = $headPosition->id;
+
+            // Назначаем должность руководителю подразделения, если он существует
             if ($unit->head) {
-                $unit->head->positions()->attach($headPosition);
-            }}
-
-
-        // 4. Для остальных пользователей
-        $otherUsers = User::whereDoesntHave('positions', function($query) use ($headPosition) {
-            $query->where('position_id', $headPosition->id);
-        })->get();
-
-        $positions = Position::where('id', '!=', $headPosition->id)->get();
-
-        foreach ($otherUsers as $user) {
-            $randomPositions = $positions->random(rand(1, 2))->pluck('id');
-            $user->positions()->attach($randomPositions);
+                $unit->head->positions()->syncWithoutDetaching([$headPosition->id]);
+            }
         }
+
+        // 2. Получаем ID всех рядовых должностей
+        $regularPositions = Position::whereNotIn('id', $headPositions)
+            ->pluck('id')
+            ->toArray();
+
+        // 3. Обрабатываем обычных пользователей
+        User::whereDoesntHave('positions', function($query) use ($headPositions) {
+            $query->whereIn('position_id', $headPositions);
+        })->chunkById(100, function ($users) use ($regularPositions) {
+            foreach ($users as $user) {
+                // Выбираем 1-2 случайные должности из доступных
+                $randomPositions = collect($regularPositions)
+                    ->shuffle()
+                    ->take(rand(1, 2))
+                    ->toArray();
+
+                $user->positions()->syncWithoutDetaching($randomPositions);
+            }
+        });
     }
 }

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('application_id')->constrained()->onDelete('cascade');
             $table->foreignId('feature_item_id')->constrained()->onDelete('cascade');
+            $table->primary(['application_id', 'feature_item_id']);
             $table->timestamps();
         });
     }

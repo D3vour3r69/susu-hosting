@@ -29,16 +29,38 @@
                         <a class="nav-link {{ request()->routeIs('applications.create') ? 'active' : '' }}"
                            href="{{ route('applications.create') }}">Новая записка</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('applications.index') ? 'active' : '' }}"
-                           href="{{ route('applications.index') }}">Мои записки</a>
-                    </li>
+                    @if(Auth::user()->hasRole('admin'))
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('applications.index') ? 'active' : '' }}"
+                               href="{{ route('applications.index') }}">Заявки на рассмотрение</a>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('applications.index') ? 'active' : '' }}"
+                               href="{{ route('applications.index') }}">Мои записки</a>
+                        </li>
+                    @endif
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('applications.unit-index') ? 'active' : '' }}"
                            href="{{ route('applications.unit-index') }}">
-                            <i class="fas fa-building me-2"></i>Записки по подразделениям
+                            <i class="fas fa-building me-2"></i>Заявки по подразделениям
                         </a>
                     </li>
+                    @if(auth()->user()->hasRole('admin'))
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                <i class="fas fa-tools"></i> Администрирование
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{{ route('features.index') }}">
+                                    <i class="fas fa-cog"></i> Управление параметрами
+                                </a>
+                                <a class="dropdown-item" href="{{ route('applications.approved') }}">
+                                    <i class="fas fa-check-circle"></i> Одобренные заявки
+                                </a>
+                            </div>
+                        </li>
+                    @endif
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">

@@ -13,15 +13,27 @@ class ApplicationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->hasAnyRole(['admin', 'user_head']);
     }
 
+    public function approve(User $user)
+    {
+        return $user->hasRole('admin');
+    }
+
+    public function manage(User $user, Application $application)
+    {
+        return $user->hasRole('admin') ||
+            ($user->hasRole('user_head') && $application->unit->head_id == $user->id);
+    }
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Application $application): bool
+    public function view(User $user, Application $application)
     {
-        return $user->id === $application->user_id;
+        return $user->hasRole('admin') ||
+            ($user->hasRole('user_head') && $application->unit->head_id == $user->id) ||
+            $application->user_id == $user->id;
     }
 
     /**
@@ -43,9 +55,9 @@ class ApplicationPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Application $application): bool
+    public function delete(User $user, Application $application)
     {
-        return $user->id === $application->user_id;
+        return $user->hasRole('admin') || $application->user_id == $user->id;
     }
 
     /**

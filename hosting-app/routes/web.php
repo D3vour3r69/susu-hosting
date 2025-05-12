@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UnitApplicationController;
 use App\Models\Unit;
@@ -22,9 +23,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'show'])->name('profile.show');
-        Route::post('/units', [ProfileController::class, 'storeUnit'])->name('profile.units.store');
-        Route::put('/units/{unit}', [ProfileController::class, 'updateUnit'])->name('profile.units.update');
-        Route::delete('/units/{unit}', [ProfileController::class, 'destroyUnit'])->name('profile.units.destroy');
+//        Route::post('/units', [ProfileController::class, 'storeUnit'])->name('profile.units.store');
+//        Route::put('/units/{unit}', [ProfileController::class, 'updateUnit'])->name('profile.units.update');
+//        Route::delete('/units/{unit}', [ProfileController::class, 'destroyUnit'])->name('profile.units.destroy');
         Route::post('/profile/positions', [ProfileController::class, 'storePosition'])->name('profile.positions.store');
         Route::put('/positions/{position}', [ProfileController::class, 'updateHeadStatus'])->name('profile.positions.update');
         Route::delete('/positions/{position}', [ProfileController::class, 'destroyPosition'])->name('profile.positions.destroy');
@@ -36,6 +37,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('applications', ApplicationController::class)
         ->except(['show', 'edit', 'update']);
 
+    Route::get('/applications/approved', [ApplicationController::class, 'approved'])
+        ->name('applications.approved');
+
     Route::get('/applications/{application}/download', [ApplicationController::class, 'download'])
         ->name('applications.download');
 
@@ -44,4 +48,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/applications/unit', [ApplicationController::class, 'unitIndex'])
         ->name('applications.unit-index');
 
+});
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/features', [FeatureController::class, 'index'])
+        ->name('features.index');
+    Route::post('/features/{feature}/items', [FeatureController::class, 'storeItem'])
+        ->name('features.items.store');
+
+    Route::post('/applications/{application}/approve', [ApplicationController::class, 'approve'])
+        ->name('applications.approve');
+
+    Route::post('/applications/{application}/reject', [ApplicationController::class, 'reject'])
+        ->name('applications.reject');
 });

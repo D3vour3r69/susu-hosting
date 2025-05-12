@@ -96,11 +96,15 @@
 
                         <div class="mb-4">
                             <label class="form-label">Статус записки</label>
-                            <select name="status" class="form-select">
-                                <option value="active" selected>Активная</option>
-                                <option value="inactive">Черновик</option>
-                                <option value="completed">Завершенная</option>
-                            </select>
+                            @if(auth()->user()->hasRole('admin'))
+                                <select name="status" class="form-select">
+                                    <option value="active">Активная</option>
+                                    <option value="inactive">Черновик</option>
+                                    <option value="completed">Завершенная</option>
+                                </select>
+                            @else
+                                <input type="hidden" name="status" value="active">
+                            @endif
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">

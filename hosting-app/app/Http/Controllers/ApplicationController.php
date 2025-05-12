@@ -50,13 +50,26 @@ class ApplicationController extends Controller
 //
 //        return view('applications.unit-index', compact('applications', 'units', 'selectedUnitId'));
 //    }
-    public function index()
+    public function index(Request $request)
     {
-        $applications = Auth::user()
-            ->applications()
-            ->with(['featureItems.feature', 'unit'])
-            ->latest()
-            ->get();
+        $status = $request->input('status');
+        $query = Application::query();
+
+        if (auth()->user()->hasRole('admin')) {
+            $query->with(['featureItems.feature', 'unit', 'user']);
+        } elseif (auth()->user()->hasRole('user_head')) {
+            $query->whereHas('unit', function($q) {
+                $q->where('head_id', auth()->id());
+            });
+        } else {
+            $query->where('user_id', auth()->id());
+        }
+
+        if ($status && in_array($status, ['active', 'inactive', 'completed'])) {
+            $query->where('status', $status);
+        }
+
+        $applications = $query->latest()->paginate(10);
 
         return view('applications.index', compact('applications'));
     }
@@ -66,6 +79,44 @@ class ApplicationController extends Controller
     {
         $features = Feature::with('items')->get();
         return view('applications.create', compact('features'));
+    }
+
+    public function approve(Application $application)
+    {
+        $this->authorize('manage', $application);
+
+        $application->update([
+            'status' => 'completed',
+            'approved' => true,
+            'approved_at' => now()
+        ]);
+
+        return back()->with('success', 'Заявка одобрена');
+    }
+
+    public function approved()
+    {
+        $applications = Application::where('approved', true)
+            ->when(!auth()->user()->hasRole('admin'), function($q) {
+                $q->whereHas('unit', function($q) {
+                    $q->where('head_id', auth()->id());
+                });
+            })
+            ->paginate(10);
+
+        return view('applications.approved', compact('applications'));
+    }
+
+    public function reject(Application $application)
+    {
+        $this->authorize('manage', $application);
+
+        $application->update([
+            'status' => 'inactive',
+            'approved' => false
+        ]);
+
+        return back()->with('warning', 'Заявка отклонена');
     }
 
     public function store(Request $request)
