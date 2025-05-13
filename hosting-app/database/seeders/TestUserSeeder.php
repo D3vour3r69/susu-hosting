@@ -9,16 +9,6 @@ use Spatie\Permission\PermissionRegistrar;
 
 class TestUserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-//    public function run() {
-//        User::create([
-//            'name' => 'Зайцев Андрей Владимирович',
-//            'email' => 'zaycev@example.com',
-//            'password' => bcrypt('123'),
-//        ]);
-//    }
     public function run(): void
     {
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
