@@ -76,7 +76,6 @@ class HeadsSeeder extends Seeder
                         'password' => bcrypt(123),
                     ]
                 );
-                $user->assignRole('user_head');
                 $headsMap[$email] = $user->id;
             }
 
