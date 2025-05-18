@@ -20,7 +20,8 @@ class DatabaseSeeder extends Seeder
             UnitSeeder::class,
             PositionSeeder::class,
             PositionUserSeeder::class,
-            FeatureSeeder::class
+            FeatureSeeder::class,
+            HeadsDirectorySeeder::class
         ]);
     }
 }

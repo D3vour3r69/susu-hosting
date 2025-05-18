@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Position;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -12,6 +13,13 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class HeadsSeeder extends Seeder
 {
+    function mb_ucfirst(string $string, string $encoding = 'UTF-8'): string
+    {
+        $firstChar = mb_substr($string, 0, 1, $encoding);
+        $then = mb_substr($string, 1, null, $encoding);
+
+        return mb_strtoupper($firstChar, $encoding) . mb_strtolower($then, $encoding);
+    }
     public function run()
     {
         $url = 'https://www.susu.ru/ru/university/official/structure';
@@ -65,8 +73,12 @@ class HeadsSeeder extends Seeder
                 $this->command->warn("У пользователя '{$headFull}' отсутствовал email, сгенерирован: {$email}");
             }
 
-            $headName = preg_replace('/,.*$/u', '', $headFull);
-            $headName = trim($headName);
+            $parts = explode(',', $headFull, 2);
+            $headName = trim($parts[0]);
+            $positionName = isset($parts[1]) ? trim($parts[1]) : 'Без должности';
+            $positionName = mb_ucfirst($positionName);
+//            $headName = preg_replace('/,.*$/u', '', $headFull);
+//            $headName = trim($headName);
 
             if (!isset($headsMap[$email])) {
                 $user = User::firstOrCreate(
@@ -79,12 +91,21 @@ class HeadsSeeder extends Seeder
                 $headsMap[$email] = $user->id;
             }
 
-            Unit::updateOrCreate(
+            $unit = Unit::updateOrCreate(
                 ['name' => $unitName],
                 ['head_id' => $headsMap[$email]]
             );
 
-            $this->command->info("Добавлено подразделение: {$unitName} с главой {$headName} ({$email})");
+            $position = Position::firstOrCreate(
+                [
+                    'name' => $positionName,
+                    'unit_id' => $unit->id,
+                ]
+            );
+
+            $user->positions()->syncWithoutDetaching([$position->id]);
+            $user->assignRole('user_head');
+            $this->command->info("Добавлено подразделение: {$unitName} с главой {$headName} ({$email}), должность: {$positionName}");
         }
 
         $this->command->info('Парсинг структуры завершён.');

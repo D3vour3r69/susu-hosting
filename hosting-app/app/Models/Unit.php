@@ -18,6 +18,11 @@ class Unit extends Model
         return $this->belongsTo(User::class, 'head_id');
     }
 
+    public function heads()
+    {
+        return $this->hasMany(Head::class);
+    }
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'positions')

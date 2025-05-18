@@ -26,46 +26,22 @@
 
                 <form action="{{ route('applications.store') }}" method="POST">
                     @csrf
-
                     <!-- Блоки с параметрами -->
-                    @foreach($features as $feature)
-                        <div class="mb-4 border-bottom pb-3">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h4 class="text-primary">{{ $feature->name }}</h4>
-                                <small class="text-muted">Выберите один вариант</small>
-                            </div>
-
-                            @if($feature->description)
-                                <p class="text-muted">{{ $feature->description }}</p>
-                            @endif
-
-                            <div class="row row-cols-1 row-cols-md-2 g-3">
-                                @foreach($feature->items as $item)
-                                    <div class="col">
-                                        <div class="card h-100 option-card">
-                                            <div class="card-body">
-                                                <div class="form-check">
-                                                    <input class="form-check-input"
-                                                           type="radio"
-                                                           name="features[{{ $feature->id }}]"
-                                                           value="{{ $item->id }}"
-                                                           id="item_{{ $item->id }}"
-                                                           required>
-                                                    <label class="form-check-label fw-bold"
-                                                           for="item_{{ $item->id }}">
-                                                        {{ $item->name }}
-                                                    </label>
-                                                </div>
-                                                @if($item->description)
-                                                    <p class="text-muted mt-2 mb-0 small">{{ $item->description }}</p>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endforeach
+                    <div class="mb-4">
+                        <label for="features_select" class="form-label">Выберите параметры</label>
+                        <select id="features_select" name="features[]" class="form-select" multiple="multiple" required style="width: 100%;">
+                            @foreach($features as $feature)
+                                <optgroup label="{{ $feature->name }}">
+                                    @foreach($feature->items as $item)
+                                        <option value="{{ $item->id }}" title="{{ $item->description ?? '' }}">
+                                            {{ $item->name }}
+                                        </option>
+                                    @endforeach
+                                </optgroup>
+                            @endforeach
+                        </select>
+                        <small class="form-text text-muted">Выберите один или несколько вариантов из списка</small>
+                    </div>
 
                     <!-- Дополнительные поля -->
                     <div class="mt-4">
@@ -95,8 +71,8 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label">Статус записки</label>
                             @if(auth()->user()->hasRole('admin'))
+                                <label class="form-label">Статус записки</label>
                                 <select name="status" class="form-select">
                                     <option value="active">Активная</option>
                                     <option value="inactive">Черновик</option>
@@ -123,6 +99,7 @@
     </div>
 
     @push('styles')
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <style>
             .option-card {
                 transition: all 0.2s ease;
@@ -149,4 +126,27 @@
             }
         </style>
     @endpush
+
 @endsection
+
+@push('scripts')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#features_select').select2({
+                placeholder: "Выберите параметры",
+                allowClear: true,
+                width: '100%',
+                templateResult: function (data) {
+                    if (!data.id) {
+                        return data.text;
+                    }
+                    var title = $(data.element).attr('title');
+                    var text = data.text;
+                    return $('<span></span>').attr('title', title).text(text);
+                }
+            });
+        });
+    </script>
+@endpush
