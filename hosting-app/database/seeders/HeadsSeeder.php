@@ -13,101 +13,151 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class HeadsSeeder extends Seeder
 {
-    function mb_ucfirst(string $string, string $encoding = 'UTF-8'): string
-    {
-        $firstChar = mb_substr($string, 0, 1, $encoding);
-        $then = mb_substr($string, 1, null, $encoding);
+    private $targetSections = [
+        'Отделы',
+        'Высшие школы и институты'
+    ];
 
-        return mb_strtoupper($firstChar, $encoding) . mb_strtolower($then, $encoding);
+    private $allowedUnits = [
+        'Высшая школа экономики и управления',
+        'Высшая школа электроники и компьютерных наук',
+        'Отдел',
+        'Кафедра'
+    ];
+
+    function mb_ucfirst(string $string): string
+    {
+        return mb_strtoupper(mb_substr($string, 0, 1)) . mb_strtolower(mb_substr($string, 1));
     }
-    public function run()
+
+    private function parseEmail(Crawler $row): ?string
     {
-        $url = 'https://www.susu.ru/ru/university/official/structure';
+        try {
+            $emailCell = $row->filter('td.views-field-field-email');
+            if ($emailCell->count() === 0) return null;
 
-        $browser = new HttpBrowser(HttpClient::create());
-        $crawler = $browser->request('GET', $url);
+            // Получаем весь текст ячейки и разбиваем на строки
+            $rawText = $emailCell->text();
+            $lines = explode("\n", $rawText);
 
-        $headsMap = [];
-        $targetSections = ['Отделы', 'Высшие школы и институты'];
-        $currentSection = null;
-
-        $rows = $crawler->filter('tr');
-        foreach ($rows as $domElement) {
-            $row = new Crawler($domElement);
-
-            if ($row->filter('td.views-field-title')->count() === 0) {
-                continue;
-            }
-
-            $unitName = trim($row->filter('td.views-field-title')->text());
-
-            if (in_array($unitName, $targetSections)) {
-                $currentSection = $unitName;
-                continue;
-            }
-
-            if (!in_array($currentSection, $targetSections)) {
-                continue;
-            }
-
-            $headFull = $row->filter('td.views-field-field-head')->count() ? trim($row->filter('td.views-field-field-head')->text()) : '';
-            if (empty($unitName) || empty($headFull) || $headFull === '-') {
-                continue;
-            }
-
-            $email = null;
-            if ($row->filter('td.views-field-field-email')->count()) {
-                $emailCell = $row->filter('td.views-field-field-email');
-                $divs = $emailCell->filter('div');
-                if ($divs->count() > 1) {
-                    $emailRaw = trim($divs->eq(1)->text());
-                    $emailNormalized = mb_strtolower(str_replace(['[at]', '[dot]', ' '], ['@', '.', ''], $emailRaw));
-                    if (preg_match('/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i', $emailNormalized, $matches)) {
-                        $email = strtolower(trim($matches[0]));
-                    }
+            // Ищем последнюю непустую строку
+            $emailLine = null;
+            for ($i = count($lines) - 1; $i >= 0; $i--) {
+                $line = trim($lines[$i]);
+                if (!empty($line)) {
+                    $emailLine = $line;
+                    break;
                 }
             }
 
-            if (!$email) {
-                $email = Str::random(10) . '@example.com';
-                $this->command->warn("У пользователя '{$headFull}' отсутствовал email, сгенерирован: {$email}");
-            }
+            // Обработка формата "E-mail: ..."
+            $emailLine = preg_replace('/^E-mail:\s*/i', '', $emailLine);
 
-            $parts = explode(',', $headFull, 2);
-            $headName = trim($parts[0]);
-            $positionName = isset($parts[1]) ? trim($parts[1]) : 'Без должности';
-            $positionName = mb_ucfirst($positionName);
-//            $headName = preg_replace('/,.*$/u', '', $headFull);
-//            $headName = trim($headName);
-
-            if (!isset($headsMap[$email])) {
-                $user = User::firstOrCreate(
-                    ['email' => $email],
-                    [
-                        'name' => $headName,
-                        'password' => bcrypt(123),
-                    ]
-                );
-                $headsMap[$email] = $user->id;
-            }
-
-            $unit = Unit::updateOrCreate(
-                ['name' => $unitName],
-                ['head_id' => $headsMap[$email]]
+            // Нормализация
+            $emailNormalized = str_ireplace(
+                ['[at]', '[dot]', ' '],
+                ['@', '.', ''],
+                trim($emailLine)
             );
 
-            $position = Position::firstOrCreate(
+            // Валидация
+            if (filter_var($emailNormalized, FILTER_VALIDATE_EMAIL)) {
+                return $emailNormalized;
+            }
+
+            return null;
+
+        } catch (\Exception $e) {
+            $this->command->error("Ошибка парсинга email: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function run()
+    {
+        $browser = new HttpBrowser(HttpClient::create());
+        $crawler = $browser->request('GET', 'https://www.susu.ru/ru/university/official/structure');
+
+        $currentSection = null;
+        $rows = $crawler->filter('tr');
+
+        foreach ($rows as $row) {
+            $rowCrawler = new Crawler($row);
+
+            // Определение раздела
+            if ($rowCrawler->filter('td.views-field-title')->count() > 0) {
+                $sectionName = trim($rowCrawler->filter('td.views-field-title')->text());
+                if (in_array($sectionName, $this->targetSections)) {
+                    $currentSection = $sectionName;
+                    $this->command->info("=== АКТИВНЫЙ РАЗДЕЛ: {$currentSection} ===");
+                    continue;
+                }
+            }
+
+            // Обрабатываем только целевые разделы
+            if (!$currentSection) continue;
+
+            // Парсим только строки с данными
+            if ($rowCrawler->filter('td.views-field-title')->count() === 0) continue;
+
+            // Нормализация названия
+            $unitName = trim($rowCrawler->filter('td.views-field-title')->text());
+            $unitName = str_replace(['«', '»'], '', $unitName);
+            $this->command->info("Обработка: {$unitName}");
+
+            // Фильтрация подразделений (с точным совпадением)
+            $isAllowed = false;
+            foreach ($this->allowedUnits as $pattern) {
+                if (str_starts_with($unitName, $pattern)) {
+                    $isAllowed = true;
+                    break;
+                }
+            }
+            if (!$isAllowed) {
+                $this->command->warn("ПРОПУЩЕНО: {$unitName}");
+                continue;
+            }
+
+            // Парсинг руководителя
+            $headFull = $rowCrawler->filter('td.views-field-field-head')->text();
+            $parts = explode(',', $headFull, 2);
+            $headName = trim($parts[0]);
+            $positionName = isset($parts[1])
+                ? $this->mb_ucfirst(trim($parts[1]))
+                : 'Руководитель';
+
+            // Email (добавлена проверка структуры)
+            $email = $this->parseEmail($rowCrawler);
+            if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $email = Str::slug($headName).'@susu.ru'; // Генерация по ФИО
+                $this->command->warn("СГЕНЕРИРОВАН EMAIL: {$email}");
+            }
+
+            // Создание пользователя
+            $user = User::updateOrCreate(
+                ['email' => $email],
                 [
-                    'name' => $positionName,
-                    'unit_id' => $unit->id,
+                    'name' => $headName,
+                    'password' => bcrypt(123),
                 ]
             );
 
+            // Создание подразделения
+            $unit = Unit::updateOrCreate(
+                ['name' => $unitName],
+                ['head_id' => $user->id]
+            );
+
+            // Создание должности
+            $position = Position::firstOrCreate([
+                'name' => $positionName,
+                'unit_id' => $unit->id,
+            ]);
+
             $user->positions()->syncWithoutDetaching([$position->id]);
             $user->assignRole('user_head');
-            $this->command->info("Добавлено подразделение: {$unitName} с главой {$headName} ({$email}), должность: {$positionName}");
-        }
 
-        $this->command->info('Парсинг структуры завершён.');
+            $this->command->info("УСПЕШНО: {$unitName} → {$headName} ({$email})");
+        }
     }
 }

@@ -113,6 +113,7 @@
                                                 @if($item->description)
                                                     <small class="text-muted d-block mt-1">{{ $item->description }}</small>
                                                 @endif
+
                                             </li>
                                         @endforeach
                                     </ul>

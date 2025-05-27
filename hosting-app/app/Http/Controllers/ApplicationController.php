@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Feature;
 use App\Models\Application;
+use App\Models\Head;
 use App\Models\Unit;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
@@ -34,22 +35,7 @@ class ApplicationController extends Controller
 
         return view('applications.unit-index', compact('applications', 'units', 'selectedUnitId'));
     }
-//    public function index(Request $request)
-//    {
-//        $units = Unit::all();
-//        $selectedUnitId = $request->input('unit_id');
-//
-//        $applications = Application::with(['user', 'user.units'])
-//            ->when($selectedUnitId, function ($query) use ($selectedUnitId) {
-//                $query->whereHas('user.units', function ($q) use ($selectedUnitId) {
-//                    $q->where('units.id', $selectedUnitId);
-//                });
-//            })
-//            ->orderByDesc('created_at')
-//            ->paginate(10);
-//
-//        return view('applications.unit-index', compact('applications', 'units', 'selectedUnitId'));
-//    }
+
     public function index(Request $request)
     {
         $status = $request->input('status');
@@ -77,8 +63,23 @@ class ApplicationController extends Controller
 
     public function create()
     {
-        $features = Feature::with('items')->get();
-        return view('applications.create', compact('features'));
+
+        $user = auth()->user();
+        $unit = $user->positions->first()->unit ?? null;
+
+        if (!$unit) {
+            abort(403, 'У пользователя не найдено подразделение');
+        }
+
+        $responsibles = \App\Models\User::whereHas('positions', function($query) use ($unit) {
+            $query->where('unit_id', $unit->id);
+        })->get();
+
+        $heads = \App\Models\Head::all();
+
+        $features = \App\Models\Feature::with('items')->get();
+
+        return view('applications.create', compact('heads', 'features', 'responsibles', 'unit'));
     }
 
     public function approve(Application $application)
@@ -122,10 +123,7 @@ class ApplicationController extends Controller
     public function store(Request $request)
     {
         $user = auth()->user();
-//        if ($user->positions->doesntExist()) {
-//            $unit = Unit::firstOrCreate(['name' => 'Временное подразделение']);
-//            $user->units()->attach($unit, ['position' => 'Временная должность']);
-//        }
+
         $userUnits = $user->positions->pluck('unit')->unique();
         if ($userUnits->count() === 1)
         {
@@ -162,12 +160,6 @@ class ApplicationController extends Controller
     public function download(Application $application)
     {
 
-//        $content = view('applications.download', compact('application'));
-//
-//        return response()->streamDownload(
-//            fn() => print($content),
-//            "application_{$application->id}.txt"
-//        );
         $this->authorize('view', $application);
 
         $pdf = Pdf::loadView('applications.pdf', compact('application'));

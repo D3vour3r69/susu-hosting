@@ -142,38 +142,6 @@
         </div>
     </div>
 
-{{--    <style>--}}
-{{--        /* Стили для переключения формы */--}}
-{{--        /*#toggleForm {*/--}}
-{{--        /*    display: none;*/--}}
-{{--        /*}*/--}}
-
-{{--        .collapse {--}}
-{{--            display: none;--}}
-{{--            opacity: 0;--}}
-{{--            transition: opacity 0.3s ease-in-out;--}}
-{{--        }--}}
-
-{{--        #toggleForm:checked ~ .card-body {--}}
-{{--            display: block;--}}
-{{--            opacity: 1;--}}
-{{--        }--}}
-
-{{--        .cursor-pointer {--}}
-{{--            cursor: pointer;--}}
-{{--        }--}}
-
-{{--        /* Плавное появление */--}}
-{{--        /*.card-body {*/--}}
-{{--        /*    overflow: hidden;*/--}}
-{{--        /*    max-height: 0;*/--}}
-{{--        /*    transition: max-height 0.3s ease-in-out;*/--}}
-{{--        /*}*/--}}
-
-{{--        #toggleForm:checked ~ .card-body {--}}
-{{--            max-height: 500px;--}}
-{{--        }--}}
-{{--    </style>--}}
 @endsection
 
 

@@ -26,6 +26,14 @@
 
                 <form action="{{ route('applications.store') }}" method="POST">
                     @csrf
+                    <div class="mb-3">
+                        <label for="head_select">Выберите главу</label>
+                        <select class="form-select" id="exampleFormControlSelect1">
+                            @foreach($heads as $head)
+                                <option>{{$head->full_name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <!-- Блоки с параметрами -->
                     <div class="mb-4">
                         <label for="features_select" class="form-label">Выберите параметры</label>
@@ -42,9 +50,12 @@
                         </select>
                         <small class="form-text text-muted">Выберите один или несколько вариантов из списка</small>
                     </div>
-
+                    <div class="mb-3">
+                        <label for="domain" class="form-label">Домен будущего сайта</label>
+                        <input type="text" class="form-control" id="domain" name="domain" placeholder="example.com" required>
+                    </div>
                     <!-- Дополнительные поля -->
-                    <div class="mt-4">
+                    <div class="mb-3">
                         @if($userUnits = auth()->user()->positions->pluck('unit')->unique())
                             @if($userUnits->count() > 1)
                                 <div class="mb-3">
@@ -61,8 +72,16 @@
                                 <input type="hidden" name="unit_id" value="{{$userUnits->first()->id }}">
                             @endif
                         @endif
+                            <div class="mb-3">
+                                <label for="responsible_id" class="form-label">Ответственный за сайт</label>
+                                <select name="responsible_id" id="responsible_id" class="form-select" required>
+                                    @foreach($responsibles as $responsible)
+                                        <option value="{{ $responsible->id }}">{{ $responsible->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         <div class="mb-3">
-                            <label for="notes" class="form-label">Комментарий</label>
+                            <label for="notes" class="form-label">Опишите для чего требуется хостинг</label>
                             <textarea class="form-control"
                                       id="notes"
                                       name="notes"
