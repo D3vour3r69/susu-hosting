@@ -100,4 +100,8 @@
     max-height: 500px;
 }
 
-
+.work-item {
+    margin-bottom: 8px;
+    padding-left: 20px;
+    text-indent: -20px;
+}

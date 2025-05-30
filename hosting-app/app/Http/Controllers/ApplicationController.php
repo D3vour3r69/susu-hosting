@@ -39,8 +39,9 @@ class ApplicationController extends Controller
     public function index(Request $request)
     {
         $status = $request->input('status');
+        $domain = $request->input('domain');
         $query = Application::query();
-
+        $showCompleted = $request->boolean('show_completed');
         if (auth()->user()->hasRole('admin')) {
             $query->with(['featureItems.feature', 'unit', 'user']);
         } elseif (auth()->user()->hasRole('user_head')) {
@@ -49,15 +50,23 @@ class ApplicationController extends Controller
             });
         } else {
             $query->where('user_id', auth()->id());
+            if (!$showCompleted) {
+                $query->where('status', '!=', 'completed');
+            }
         }
 
         if ($status && in_array($status, ['active', 'inactive', 'completed'])) {
             $query->where('status', $status);
         }
 
+        if ($domain) {
+            $query->where('domain', 'like', '%' . $domain . '%');
+        }
+
+
         $applications = $query->latest()->paginate(10);
 
-        return view('applications.index', compact('applications'));
+        return view('applications.index', compact('applications', 'showCompleted', 'domain', 'status'));
     }
 
 
@@ -97,23 +106,7 @@ class ApplicationController extends Controller
 
     public function approved(Request $request)
     {
-//        $applications = Application::where('approved', true)
-//            ->when(!auth()->user()->hasRole('admin'), function($q) {
-//                $q->whereHas('unit', function($q) {
-//                    $q->where('head_id', auth()->id());
-//                });
-//            })->paginate(10);
-//
-//
-//        if ($request->filled('domain')) {
-//            $domain = $request->input('domain');
-//            $applications->where('domain', 'like', "%{$domain}%");
-//        }
-//
-//
-//
-//
-//        return view('applications.approved', compact('applications'));
+
         $query = Application::where('approved', true);
 
         if (!auth()->user()->hasRole('admin')) {
@@ -188,17 +181,29 @@ class ApplicationController extends Controller
 
     public function download(Application $application)
     {
-
         $this->authorize('view', $application);
 
-        $pdf = Pdf::loadView('applications.pdf', compact('application'));
-        return $pdf->download("application_{$application->id}.pdf");
-    }
+        // Загружаем необходимые отношения
+        $application->load([
+            'unit.head',
+            'responsible',
+            'featureItems'
+        ]);
 
-    public function destroy(Application $application)
-    {
-        $application->delete();
-        return redirect()->back()
-            ->with('success', 'Записка успешно удалена');
+        // Получаем адресата (начальника) через подразделение
+        $head = $application->unit->head ?? Head::first();
+
+        // Настройка PDF
+        $pdf = PDF::loadView('applications.pdf', [
+            'application' => $application,
+            'head' => $head
+        ]);
+
+        $pdf->setOption('defaultFont', 'times');
+        $pdf->setOption('isRemoteEnabled', true);
+
+        $filename = "Служебная_записка_{$application->id}.pdf";
+
+        return $pdf->download($filename);
     }
 }

@@ -75,23 +75,17 @@
                             </div>
                         @endif
 
-                        <!-- Форма добавления с CSS-переключением -->
-                        <!-- Форма добавления -->
+                        <!-- Форма добавления с исправленным чекбоксом -->
                         <div class="card border-primary mt-3">
                             <div class="card-header bg-light">
                                 <label class="cursor-pointer d-flex align-items-center gap-2 mb-0">
                                     Добавьте подразделение для пользователя
-
-{{--                                    <span class="fs-6">--}}
-{{--                                        <i class="fas fa-plus me-1"></i>Добавить подразделение--}}
-{{--                                    </span>--}}
                                 </label>
                             </div>
-                            <!-- Скрытый контент -->
                             <div class="card-body" id="formContent">
                                 <form action="{{ route('profile.positions.store') }}" method="POST">
                                     @csrf
-                                    <div class="row g-3">
+                                    <div class="row g-3 align-items-center">
                                         <div class="col-md-6">
                                             <select class="form-select" name="unit_id" required>
                                                 <option value="">Выберите подразделение</option>
@@ -111,23 +105,24 @@
                                             >
                                         </div>
 
+                                        <!-- Исправленный блок чекбокса -->
                                         <div class="col-md-2">
-                                            <div class="form-check">
+                                            <div class="form-check d-flex align-items-center h-100">
                                                 <input
                                                     type="checkbox"
-                                                    class="form-check-input m-0"
+                                                    class="form-check-input mt-0"
                                                     id="isHead"
                                                     name="is_head"
                                                     value="1"
                                                     autocomplete="off"
                                                 >
-                                                <label class="form-check-label" for="isHead">
+                                                <label class="form-check-label ms-2" for="isHead">
                                                     Руководитель
                                                 </label>
                                             </div>
                                         </div>
 
-                                        <div class="col-12">
+                                        <div class="col-12 mt-3">
                                             <button type="submit" class="btn btn-primary w-100">
                                                 <i class="fas fa-save me-2"></i>Сохранить
                                             </button>
@@ -141,7 +136,4 @@
             </div>
         </div>
     </div>
-
 @endsection
-
-

@@ -17,4 +17,13 @@ class Head extends Model
     {
         return $this->belongsTo(Unit::class);
     }
+    public function getAddressTitleAttribute()
+    {
+        // Заменяем "Начальник" на "Начальнику" и т.д.
+        return str_replace(
+            ['Начальник', 'Проректор', 'Руководитель'],
+            ['Начальнику', 'Проректору', 'Руководителю'],
+            $this->position
+        );
+    }
 }

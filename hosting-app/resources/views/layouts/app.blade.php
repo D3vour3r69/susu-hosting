@@ -16,7 +16,9 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+{{--    <img src="{{ asset('/storage/logo.png') }}" class="logo" alt="Логотип">--}}
     <div class="container">
+
         <a class="navbar-brand" href="{{ route('home') }}">Служебные записки</a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
