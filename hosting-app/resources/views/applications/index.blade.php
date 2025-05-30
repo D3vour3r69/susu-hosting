@@ -122,6 +122,20 @@
                         @endforeach
                     </div>
 
+                    <div class="mt-4">
+                        <h5>Домен будущего сайта:</h5>
+                        <div class="border p-3 rounded bg-light">
+                            {{ $application->domain }}
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h5>Ответственный за сайт:</h5>
+                        <div class="border p-3 rounded bg-light">
+                            {{ $application->responsible->name ?? 'Не назначен' }}
+                        </div>
+                    </div>
+
                     @if($application->notes)
                         <div class="mt-4">
                             <h5>Комментарий:</h5>

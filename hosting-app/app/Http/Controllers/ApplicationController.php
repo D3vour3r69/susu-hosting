@@ -95,15 +95,39 @@ class ApplicationController extends Controller
         return back()->with('success', 'Заявка одобрена');
     }
 
-    public function approved()
+    public function approved(Request $request)
     {
-        $applications = Application::where('approved', true)
-            ->when(!auth()->user()->hasRole('admin'), function($q) {
-                $q->whereHas('unit', function($q) {
-                    $q->where('head_id', auth()->id());
-                });
-            })
-            ->paginate(10);
+//        $applications = Application::where('approved', true)
+//            ->when(!auth()->user()->hasRole('admin'), function($q) {
+//                $q->whereHas('unit', function($q) {
+//                    $q->where('head_id', auth()->id());
+//                });
+//            })->paginate(10);
+//
+//
+//        if ($request->filled('domain')) {
+//            $domain = $request->input('domain');
+//            $applications->where('domain', 'like', "%{$domain}%");
+//        }
+//
+//
+//
+//
+//        return view('applications.approved', compact('applications'));
+        $query = Application::where('approved', true);
+
+        if (!auth()->user()->hasRole('admin')) {
+            $query->whereHas('unit', function($q) {
+                $q->where('head_id', auth()->id());
+            });
+        }
+
+        if ($request->filled('domain')) {
+            $domain = $request->input('domain');
+            $query->where('domain', 'like', "%{$domain}%");
+        }
+
+        $applications = $query->paginate(10);
 
         return view('applications.approved', compact('applications'));
     }
@@ -138,15 +162,20 @@ class ApplicationController extends Controller
             'features' => 'required|array',
             'features.*' => 'required|exists:feature_items,id',
             'notes' => 'nullable|string|max:1000',
-            'status' => 'required|in:active,inactive,completed'
+            'status' => 'required|in:active,inactive,completed',
+            'domain' => 'required|string|max:255',
+            'responsible_id' => 'required|exists:users,id',
         ]);
 
         try {
             $application = Application::create([
                 'user_id' => $user->id,
                 'unit_id' => $unitId,
-                'notes' => $validated['notes'],
-                'status' => $validated['status']
+                'notes' => $validated['notes'] ?? null,
+                'status' => $validated['status'],
+                'domain' => $validated['domain'],
+                'responsible_id' => $validated['responsible_id'],
+
             ]);
 
             $application->featureItems()->sync($validated['features']);

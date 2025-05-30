@@ -46,6 +46,4 @@ class FeatureController extends Controller
         $feature->delete();
         return redirect()->route('features.index');
     }
-
-
 }

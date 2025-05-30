@@ -12,10 +12,17 @@ class Application extends Model
         'user_id',
         'unit_id',
         'notes',
+        'responsible_id',
         'status',
         'approved',
-        'approved_at'
+        'approved_at',
+        'domain',
     ];
+    public function responsible()
+    {
+        return $this->belongsTo(User::class, 'responsible_id');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

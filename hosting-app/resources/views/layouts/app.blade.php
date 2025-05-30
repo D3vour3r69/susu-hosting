@@ -26,10 +26,12 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             @auth
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('applications.create') ? 'active' : '' }}"
-                           href="{{ route('applications.create') }}">Новая записка</a>
-                    </li>
+                    @if(!Auth::user()->hasRole('admin'))
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('applications.create') ? 'active' : '' }}"
+                               href="{{ route('applications.create') }}">Новая записка</a>
+                        </li>
+                    @endif
                     @if(Auth::user()->hasRole('admin'))
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('applications.index') ? 'active' : '' }}"

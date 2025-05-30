@@ -81,7 +81,6 @@
 <!-- Шапка документа -->
 <div class="header">
     <img src="{{ storage_path('app/public/logo.png') }}" class="logo" alt="Логотип">
-
     <p class="ministry">
         МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ<br>
         РОССИЙСКОЙ ФЕДЕРАЦИИ
@@ -101,12 +100,12 @@
 <div class="content">
     <div class="document-title">
         СЛУЖЕБНАЯ ЗАПИСКА<br>
-        от «{{ date('d.m.Y') }}» № {{ $application_number ?? '____' }}
+        от «{{ date('d.m.Y') }}»
     </div>
 
     <div class="work-description">
         <p><strong>О выполнении работ</strong></p>
-        <p>Прошу выполнить следующие работы:</p>
+        <p>Прошу выполнить хостинг сайта:</p>
 
         <div class="underline">{{ $work_description ?? '____________________________________________________' }}</div>
         <div class="underline">{{ $additional_info ?? '____________________________________________________' }}</div>
