@@ -2,12 +2,12 @@
 
 @section('content')
     <div class="container">
-
         @if (auth()->user()->hasRole('admin'))
             <h1 class="mb-4">Записки для рассмотрения</h1>
         @else
             <h1 class="mb-4">Мои служебные записки</h1>
         @endif
+
         <form method="GET" class="mb-4">
             <div class="row g-3 align-items-center">
                 <div class="col-auto">
@@ -29,35 +29,55 @@
                 </div>
             </div>
         </form>
+
         @if (!auth()->user()->hasRole('admin'))
             <a href="{{ route('applications.create') }}" class="btn btn-primary mb-4">
                 <i class="fas fa-plus-circle"></i> Создать новую
             </a>
         @endif
+
         @forelse($applications as $application)
             <div class="card mb-4 shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center bg-light">
                     <div>
-                            <span
-                                class="badge bg-{{ $application->status === 'active' ? 'success' : ($application->status === 'completed' ? 'secondary' : 'warning') }}">
-                                {{ $application->status }}
-                            </span>
+                        <span class="badge bg-{{ $application->status === 'active' ? 'success' : ($application->status === 'completed' ? 'secondary' : 'warning') }}">
+                            {{ $application->status }}
+                        </span>
                         <small class="text-muted ms-2">
                             {{ $application->created_at->format('d.m.Y H:i') }}
                         </small>
                     </div>
-                    <div>
-                        <a href="{{ route('applications.download', $application) }}"
+                    <div class="btn-group">
+                        @if(auth()->user()->hasRole('admin'))
+                            @if($application->status === 'active')
+                                <form action="{{ route('applications.approve', $application) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-success" title="Одобрить">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+                            @endif
+                            @if(!($application->status === 'inactive'))
+                                <form action="{{ route('applications.reject', $application) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-warning" title="Отклонить">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>
+                                @endif
+                        @endif
 
-                           class="btn btn-sm btn-outline-primary">
+                        <a href="{{ route('applications.download', $application) }}"
+                           class="btn btn-sm btn-outline-primary" title="Скачать">
                             <i class="fas fa-download"></i>
                         </a>
+
                         <form action="{{ route('applications.destroy', $application) }}"
                               method="POST"
                               class="d-inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Удалить">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
@@ -65,7 +85,7 @@
                 </div>
 
                 <div class="card-body">
-                    <h5 class="card-title">Выбранные параметры:</h5>
+                    <h5 class="card-title">Заявка #{{ $application->id }} - Выбранные параметры:</h5>
                     <div class="row">
                         @foreach($application->featureItems->groupBy('feature_id') as $group)
                             <div class="col-md-4 mb-3">

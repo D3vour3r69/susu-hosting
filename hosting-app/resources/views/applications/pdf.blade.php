@@ -17,15 +17,20 @@
             padding: 0;
         }
 
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
+        /* Контейнер для всего контента */
+        .content-wrapper {
+            position: relative;
+            width: 100%;
+
         }
 
+        /* Блок адресата - позиционирование как в документе */
         .address-block {
+            position: absolute;
+            top: 0;
+            right: 0;
             width: 65%;
+            margin-bottom: 30px;
         }
 
         .address-title {
@@ -34,21 +39,21 @@
         }
 
         .address-name {
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
-        .logo-container {
-            width: 30%;
-            text-align: right;
-        }
+        /* Логотип - позиционирование как в документе */
+
 
         .logo {
-            height: 80px; /* Высота как в документе */
+            height: 80px;
             width: auto;
         }
 
+        /* Основной заголовок документа */
         .header {
-            text-align: center;
+            text-align: left;
+            margin-top: 100px; /* Отступ для места под адресата и лого */
             margin-bottom: 20px;
         }
 
@@ -58,6 +63,7 @@
             text-transform: uppercase;
             margin-bottom: 0;
             line-height: 1.2;
+            text-align: center;
         }
 
         .university {
@@ -65,6 +71,7 @@
             font-weight: bold;
             margin-bottom: 0;
             line-height: 1.3;
+            text-align: center;
         }
 
         .department {
@@ -74,6 +81,7 @@
             margin-top: 15px;
             margin-bottom: 20px;
             line-height: 1.2;
+            text-align: center;
         }
 
         .document-title {
@@ -85,7 +93,7 @@
         }
 
         .document-info {
-            text-align: right;
+            text-align: center;
             margin-bottom: 20px;
         }
 
@@ -162,84 +170,90 @@
     </style>
 </head>
 <body>
-<!-- Блок адресата и логотипа -->
-<div class="header-container">
-    <div class="address-block">
-        <div class="address-title">
-            {{ $head->name }} {{ $head->position }}
+<div class="content-wrapper">
+    <!-- Блок адресата - левый верхний угол -->
+    @if($head)
+        <div class="address-block">
+            <div class="address-title">
+                {{ $head->address_title }}
+            </div>
+            <div class="address-name">
+                {{ $head->full_name }}
+            </div>
         </div>
-        <div class="address-name">
-            {{ $head->full_name }}
-        </div>
-    </div>
+    @endif
+
 
     <div class="logo-container">
         <img src="{{ public_path('storage/logo.png') }}" class="logo" alt="Логотип">
     </div>
-</div>
 
-<div class="header">
-    <div class="ministry">
-        министерство науки и высшего образования
-    </div>
-    <div class="ministry">
-        российской федерации
-    </div>
-    <div class="university">
-        южно-уральский
-    </div>
-    <div class="university">
-        государственный университет
-    </div>
-    <div class="department">
-        {{ $application->unit->name }}
-    </div>
-</div>
 
-<div class="document-title">
-    служебная записка
-</div>
-
-<div class="document-info">
-    <span class="underline">{{ now()->format('d.m.Y') }}</span> № <span class="underline"">{{ $application->id }}</span>
-</div>
-
-<div class="section-title">
-    О выполнении работ
-</div>
-
-<p>Прошу выполнить следующие работы по настройке и обслуживанию хостинг-сервисов:</p>
-
-<div class="works-description">
-    @foreach($application->featureItems as $item)
-        <div class="work-item">{{ $item->name }}</div>
-    @endforeach
-
-    @if($application->notes)
-        <div class="notes-section">
-            <strong>Дополнительные примечания:</strong><br>
-            {{ $application->notes }}
+    <div class="header">
+        <div class="ministry">
+            министерство науки и высшего образования
         </div>
-    @endif
-</div>
+        <div class="ministry">
+            российской федерации
+        </div>
+        <div class="university">
+            южно-уральский
+        </div>
+        <div class="university">
+            государственный университет
+        </div>
+        <div class="department">
+            {{ $application->unit->name }}
+        </div>
+    </div>
 
-<div class="signature-block">
-    <div class="signature-line"></div>
-    <div>Руководитель <span class="underline"></span> /{{ $application->unit->head->name ?? '________________' }}/</div>
-</div>
+    <!-- Остальная часть документа -->
+    <div class="document-title">
+        служебная записка
+    </div>
 
-<div class="contact-info">
-    <p>Контактные данные ответственного работника:</p>
-    <p>
-        Ф.И.О. <span class="contact-field">{{ $application->responsible->name }}</span>
-    </p>
-    <p>
-        Тел. : <span class="contact-field"></span>
-    </p>
-    <p>
-        E-mail: <span class="contact-field">{{ $application->responsible->email }}</span>
-    </p>
-</div>
+    <div class="document-info">
+        <span class="underline">{{ now()->format('d.m.Y') }}</span> № <span class="underline">{{ $application->id }}</span>
+    </div>
 
+    <div class="section-title">
+        О выполнении работ
+    </div>
+
+    <p>Прошу выполнить следующие работы по настройке и обслуживанию хостинг-сервисов со следующими технологиями:</p>
+
+    <div class="works-description">
+        @foreach($application->featureItems as $item)
+            <div class="work-item">{{ $item->name }}</div>
+        @endforeach
+
+        @if($application->notes)
+            <div class="notes-section">
+{{--                <strong>Дополнительные примечания:</strong><br>--}}
+                {{ $application->notes }}
+            </div>
+        @endif
+    </div>
+
+    <div class="signature-block">
+        <div class="signature-line"></div>
+        <div>Руководитель <span class="underline"></span> /{{ $application->unit->head->name ?? '________________' }}/</div>
+    </div>
+
+    <div class="contact-info">
+        <p>Контактные данные ответственного работника:</p>
+        <p>
+            Ф.И.О. <span class="contact-field">{{ $application->responsible->name }}</span>
+        </p>
+        <p>
+            Тел.: <span class="contact-field"></span>
+        </p>
+        <p>
+            E-mail: <span class="contact-field">{{ $application->responsible->email }}</span>
+        </p>
+    </div>
+
+
+</div>
 </body>
 </html>

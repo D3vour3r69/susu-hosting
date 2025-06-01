@@ -128,11 +128,19 @@ class ApplicationController extends Controller
     public function reject(Application $application)
     {
         $this->authorize('manage', $application);
-
-        $application->update([
-            'status' => 'inactive',
-            'approved' => false
-        ]);
+        if ($application->status === 'completed') {
+            $application->update([
+                'status' => 'active',
+                'approved' => false
+            ]);
+        }
+        else
+        {
+            $application->update([
+                'status' => 'inactive',
+                'approved' => false
+            ]);
+        }
 
         return back()->with('warning', 'Заявка отклонена');
     }
@@ -187,7 +195,7 @@ class ApplicationController extends Controller
         $application->load([
             'unit.head',
             'responsible',
-            'featureItems'
+            'featureItems',
         ]);
 
         // Получаем адресата (начальника) через подразделение
