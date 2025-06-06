@@ -14,7 +14,13 @@ return new class extends Migration
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
+            $table->foreignId('unit_id')->constrained();
+            $table->string('domain')->nullable();
+            $table->unsignedTinyInteger('responsible_id')->nullable();
+            $table->foreign('responsible_id')->references('id')->on('users')->nullOnDelete();
             $table->text('notes')->nullable();
+            $table->boolean('approved')->default(false);
+            $table->timestamp('approved_at')->nullable();
             $table->timestamps();
         });
     }

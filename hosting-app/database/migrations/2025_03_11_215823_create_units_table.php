@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -13,12 +14,15 @@ return new class extends Migration
     {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('head');
+            $table->string('name')->unique();
+            $table->foreignId('head_id')
+                ->nullable()
+                ->constrained('users')       // Связь с users
+                ->onDelete('set null');      // При удалении пользователя → null
             $table->unsignedBigInteger('external_id')->nullable();
-
             $table->timestamps();
-            $table->index('external_id'); //Индекс для внешнего ключа, потенциально ускоряет обработки
+
+            $table->index('external_id');
         });
     }
 
@@ -27,6 +31,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('units');
+//        Schema::dropIfExists('units');
+        DB::statement('DROP TABLE units CASCADE');
     }
 };

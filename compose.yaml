@@ -34,6 +34,8 @@ services:
       POSTGRES_PASSWORD: secret
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "8999:5432"
 
 volumes:
   postgres_data:

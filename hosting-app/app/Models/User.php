@@ -4,13 +4,16 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'external_id'
+        'external_id',
     ];
 
     /**
@@ -42,14 +45,29 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
-    public function externalEntity()
+    public function managedUnits() {
+        return $this->hasMany(Unit::class, 'head_id');
+    }
+
+    public function positions()
     {
-        // Что-то типо такого наверное, пока не уверен.
-        return ExternalApiService::getById($this->external_id);
+        return $this->belongsToMany(Position::class)
+            ->withTimestamps();
+    }
+
+    public function applications(): HasMany
+    {
+        return $this->hasMany(Application::class);
+    }
+
+    public function units()
+    {
+        return $this->belongsToMany(Unit::class, 'positions', 'unit_id', 'id')
+            ->using(Position::class)
+            ->withPivot('name');
     }
 
 }

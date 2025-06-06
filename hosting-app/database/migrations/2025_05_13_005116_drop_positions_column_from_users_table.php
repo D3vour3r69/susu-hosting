@@ -11,10 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('external_id')->nullable();
-            $table->index('external_id', 'external_id_index'); //Индекс для внешнего ключа, как и в юните
-        });
+        DB::statement('ALTER TABLE users DROP COLUMN IF EXISTS positions');
     }
 
     /**
@@ -23,8 +20,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('external_id');
-            $table->dropIndex('external_id_index');
+            //
         });
     }
 };
