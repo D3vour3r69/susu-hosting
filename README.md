@@ -4,7 +4,7 @@
 1. Клонирование репозитория
 Перейдите в директорию, где вы хотите разместить проект, и выполните команду для клонирования репозитория:
 ```bash
-git clone https://github.com/D3vour3r69/susu-hosting/tree/feature
+git clone https://github.com/D3vour3r69/susu-hosting.git
 ```
 Зайдите в директорию проекта
 ```bash
@@ -25,15 +25,7 @@ cp .env.example .env
    - DB_DATABASE=laravel - Название созданной базы данных
    - DB_USERNAME=laravel - Пользователь базы данных
    - DB_PASSWORD=secret - Пароль от базы данных
-     
-   
-    
-    
-   
-    
-    
 
-        
 # Важные замечания
 - Не коммитьте `.env` в Git!
 - Для production замените `APP_DEBUG=true` на `false`.
@@ -60,9 +52,9 @@ cp .env.example .env
 
 4. Выполните миграции:
    ```bash
-   docker-compose exec app php artisan migrate
+   docker-compose exec app php artisan migrate:refresh --seed
    ```
-
+-Может быть ошибка связанная с столбцем domain в таблице application, в таком случае нужно перепровести миграции ещё раз.
 ## Проверка работоспособности
 
   Откройте веб-браузер и перейдите по адресу http://localhost:8000, чтобы проверить работоспособность приложения.
