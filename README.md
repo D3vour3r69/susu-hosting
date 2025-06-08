@@ -52,9 +52,13 @@ cp .env.example .env
 
 4. Выполните миграции:
    ```bash
-   docker-compose exec app php artisan migrate:refresh --seed
+   docker-compose exec app php artisan migrate --seed
    ```
--Может быть ошибка связанная с столбцем domain в таблице application, в таком случае нужно перепровести миграции ещё раз.
+5. Запустите парсеры для сотрудников и начальников
+   '''bash
+   php artisan app:parse-structure
+   php artisan app:parse-employees      
+   '''
 ## Проверка работоспособности
 
   Откройте веб-браузер и перейдите по адресу http://localhost:8000, чтобы проверить работоспособность приложения.
