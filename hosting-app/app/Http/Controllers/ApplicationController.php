@@ -38,9 +38,11 @@ class ApplicationController extends Controller
 
     public function index(Request $request)
     {
+
         $status = $request->input('status');
         $domain = $request->input('domain');
         $query = Application::query();
+        $query->with(['head']);
         $showCompleted = $request->boolean('show_completed');
         if (auth()->user()->hasRole('admin')) {
             $query->with(['featureItems.feature', 'unit', 'user']);
@@ -150,15 +152,13 @@ class ApplicationController extends Controller
         $user = auth()->user();
 
         $userUnits = $user->positions->pluck('unit')->unique();
-        if ($userUnits->count() === 1)
-        {
+        if ($userUnits->count() === 1) {
             $unitId = $userUnits->first()->id;
-        }
-        else
-        {
+        } else {
             $validatedUnit = $request->validate(['unit_id' => 'required|exists:units,id']);
             $unitId = $validatedUnit['unit_id'];
         }
+
         $validated = $request->validate([
             'features' => 'required|array',
             'features.*' => 'required|exists:feature_items,id',
@@ -166,20 +166,22 @@ class ApplicationController extends Controller
             'status' => 'required|in:active,inactive,completed',
             'domain' => 'required|string|max:255',
             'responsible_id' => 'required|exists:users,id',
+            'head_id' => 'required|exists:heads,id',
         ]);
 
         try {
             $application = Application::create([
                 'user_id' => $user->id,
                 'unit_id' => $unitId,
+                'head_id' => $validated['head_id'],
                 'notes' => $validated['notes'] ?? null,
                 'status' => $validated['status'],
                 'domain' => $validated['domain'],
                 'responsible_id' => $validated['responsible_id'],
-
             ]);
 
             $application->featureItems()->sync($validated['features']);
+
             return redirect()->route('applications.index')->with('success', 'Записка создана!');
         } catch (\Exception $e) {
             \Log::error('Ошибка: ' . $e->getMessage());
@@ -191,20 +193,23 @@ class ApplicationController extends Controller
     {
         $this->authorize('view', $application);
 
-        // Загружаем необходимые отношения
+
         $application->load([
             'unit.head',
             'responsible',
             'featureItems',
+            'head'
         ]);
 
-        // Получаем адресата (начальника) через подразделение
-        $head = $application->unit->head ?? Head::first();
+//        $heads = $application->heads
+//
+//
+//        $head = $heads->first();
 
-        // Настройка PDF
+
         $pdf = PDF::loadView('applications.pdf', [
             'application' => $application,
-            'head' => $head
+//            'head' => $head
         ]);
 
         $pdf->setOption('defaultFont', 'times');
