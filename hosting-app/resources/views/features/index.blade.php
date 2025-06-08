@@ -54,7 +54,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <input type="text" name="slug" class="form-control"
-                                               placeholder="Уникальный идентификатор" required>
+                                               placeholder="Уникальный идентификатор(Slug)" required>
                                     </div>
                                     <div class="col-md-4">
                                         <button type="submit" class="btn btn-success w-100">

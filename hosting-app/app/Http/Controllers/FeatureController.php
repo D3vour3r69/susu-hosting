@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Application;
 use App\Models\Feature;
+use App\Models\FeatureItem;
 use Illuminate\Http\Request;
 
 class FeatureController extends Controller
@@ -26,8 +27,8 @@ class FeatureController extends Controller
             'slug' => 'required|unique:features|max:255'
         ]);
 
-        $feature->items()->create($validated);
-        return redirect()->route('features.index');
+        Feature::create($validated);
+        return redirect()->route('features.index')->with('success', 'Категория создана');
     }
 
     public function storeItem(Request $request, Feature $feature)
@@ -38,12 +39,17 @@ class FeatureController extends Controller
         ]);
 
         $feature->items()->create($validated);
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Пункт добавлен');
     }
 
     public function destroy(Feature $feature)
     {
         $feature->delete();
         return redirect()->route('features.index');
+    }
+    public function destroyItem(FeatureItem $item)
+    {
+        $item->delete();
+        return redirect()->back()->with('success', 'Пункт удален');
     }
 }
