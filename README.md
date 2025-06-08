@@ -55,10 +55,10 @@ cp .env.example .env
    docker-compose exec app php artisan migrate --seed
    ```
 5. Запустите парсеры для сотрудников и начальников
-   '''bash
+   ```bash
    php artisan app:parse-structure
    php artisan app:parse-employees      
-   '''
+   ```
 ## Проверка работоспособности
 
   Откройте веб-браузер и перейдите по адресу http://localhost:8000, чтобы проверить работоспособность приложения.
