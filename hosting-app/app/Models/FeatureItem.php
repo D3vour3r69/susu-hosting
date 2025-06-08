@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class FeatureItem extends Model
 {
+    protected $fillable = [
+        'slug',
+        'name',
+        'description',
+    ];
+
     public function feature()
     {
         return $this->belongsTo(Feature::class);

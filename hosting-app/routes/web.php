@@ -7,6 +7,7 @@ use App\Models\Unit;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\HomeController;
+use PhpOffice\PhpWord\IOFactory;
 
 // Маршруты аутентификации
 Auth::routes(['register' => true]);
@@ -51,10 +52,18 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/features', [FeatureController::class, 'index'])
-        ->name('features.index');
+    Route::get('/features', [FeatureController::class, 'index'])->name('features.index');
+
+    Route::post('/features', [FeatureController::class, 'store'])->name('features.store');
+
     Route::post('/features/{feature}/items', [FeatureController::class, 'storeItem'])
         ->name('features.items.store');
+
+    Route::delete('/features/{feature}', [FeatureController::class, 'destroy'])
+        ->name('features.destroy');
+
+    Route::delete('/features/items/{item}', [FeatureController::class, 'destroyItem'])
+        ->name('features.items.destroy');
 
     Route::post('/applications/{application}/approve', [ApplicationController::class, 'approve'])
         ->name('applications.approve');
@@ -62,3 +71,4 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/applications/{application}/reject', [ApplicationController::class, 'reject'])
         ->name('applications.reject');
 });
+
