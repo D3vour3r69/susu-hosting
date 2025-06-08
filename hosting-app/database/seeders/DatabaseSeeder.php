@@ -16,11 +16,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             TestUserSeeder::class,
-            HeadsSeeder::class,
+//            HeadsSeeder::class,
 //            EmployeeSeeder::class,
-            UnitSeeder::class,
-            PositionSeeder::class,
-            PositionUserSeeder::class,
+//            UnitSeeder::class,
+//            PositionSeeder::class,
+//            PositionUserSeeder::class,
             FeatureSeeder::class,
             HeadsDirectorySeeder::class
         ]);

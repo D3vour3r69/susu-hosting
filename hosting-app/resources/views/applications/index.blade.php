@@ -110,6 +110,13 @@
                     </div>
 
                     <div class="mt-4">
+                        <h5>На кого написано заявление:</h5>
+                        <div class="border p-3 rounded bg-light">
+                            {{ optional($application->head)->full_name ?? 'Начальник не выбран' }}
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
                         <h5>Домен будущего сайта:</h5>
                         <div class="border p-3 rounded bg-light">
                             {{ $application->domain }}
