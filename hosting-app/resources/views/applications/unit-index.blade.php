@@ -86,9 +86,9 @@
                             </div>
                         @endforeach
                     </div>
-                    <div class="mt-3">
-                        {{ $applications->links() }}
-                    </div>
+{{--                    <div class="mt-3">--}}
+{{--                        {{ $applications->links() }}--}}
+{{--                    </div>--}}
                 @endif
             </div>
         </div>

@@ -141,7 +141,7 @@ class HeadsSeeder extends Seeder
                     'password' => bcrypt(123),
                 ]
             );
-
+            $user->assignRole('user_head');
             // Создание подразделения
             $unit = Unit::updateOrCreate(
                 ['name' => $unitName],

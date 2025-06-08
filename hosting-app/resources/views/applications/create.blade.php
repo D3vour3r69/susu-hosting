@@ -28,11 +28,17 @@
                     @csrf
                     <div class="mb-3">
                         <label for="head_select">Выберите главу</label>
-                        <select class="form-select" id="exampleFormControlSelect1">
+                        <select class="form-select" id="head_select" name="head_id" required>
+                            <option value="">-- Выберите --</option>
                             @foreach($heads as $head)
-                                <option>{{$head->full_name}}</option>
+                                <option value="{{ $head->id }}" {{ old('head_id') == $head->id ? 'selected' : '' }}>
+                                    {{ $head->full_name }}
+                                </option>
                             @endforeach
                         </select>
+                        @error('head_id')
+                        <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
                     <!-- Блоки с параметрами -->
                     <div class="mb-4">

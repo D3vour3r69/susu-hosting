@@ -11,6 +11,7 @@ class Application extends Model
     protected $fillable = [
         'user_id',
         'unit_id',
+        'head_id',
         'notes',
         'responsible_id',
         'status',
@@ -30,6 +31,10 @@ class Application extends Model
     public function unit()
     {
         return $this->belongsTo(Unit::class);
+    }
+    public function head()
+    {
+        return $this->belongsTo(Head::class);
     }
     public function getFormattedCreatedAtAttribute()
     {
