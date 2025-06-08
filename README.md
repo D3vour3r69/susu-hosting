@@ -26,20 +26,17 @@ cp .env.example .env
    - DB_USERNAME=laravel - Пользователь базы данных
    - DB_PASSWORD=secret - Пароль от базы данных
 
-# Важные замечания
-- Не коммитьте `.env` в Git!
-- Для production замените `APP_DEBUG=true` на `false`.
-- Если возникают ошибки прав доступа, выполните:
-  ```bash
-  docker-compose exec app chmod -R 775 storage bootstrap/cache
-  ```
 ## Установка
 
 1. Запустите контейнеры:
    ```bash
    docker-compose up -d --build
    ```
-
+# Важные замечания
+- Если возникают ошибки прав доступа, выполните:
+  ```bash
+  docker-compose exec app chmod -R 775 storage bootstrap/cache
+  ```
 2. Установите PHP-зависимости **внутри контейнера**:
    ```bash
    docker-compose exec app composer install
