@@ -58,9 +58,9 @@
     }
 }
 
-.bg-secondary
-{
-    background-color: #4d76c1 !important;;
+
+.bg-secondary{
+    background-color: rgb(13 110 253) !important;
 }
 
 .w-100{

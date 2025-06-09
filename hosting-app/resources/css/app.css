@@ -160,3 +160,7 @@
 .w-100{
     width: fit-content;
 }
+
+.bg-secondary{
+    background-color: rgb(13 110 253);
+}
