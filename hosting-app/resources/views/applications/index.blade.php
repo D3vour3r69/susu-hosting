@@ -145,5 +145,8 @@
                 У вас пока нет созданных записок
             </div>
         @endforelse
+            <div class="d-flex justify-content-center mt-4">
+                {{ $applications->appends(request()->query())->links('pagination::bootstrap-5') }}
+            </div>
     </div>
 @endsection
