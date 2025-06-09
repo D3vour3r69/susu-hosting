@@ -49,7 +49,7 @@ cp .env.example .env
 
 4. Выполните миграции:
    ```bash
-   docker-compose exec app php artisan migrate --seed
+   docker-compose exec app php artisan migrate:fresh --seed
    ```
 5. Запустите парсеры для сотрудников и начальников, это может занять какое-то время
    ```bash
