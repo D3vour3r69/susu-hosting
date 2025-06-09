@@ -35,7 +35,7 @@ cp .env.example .env
 # Важные замечания
 - Если возникают ошибки прав доступа, выполните:
   ```bash
-  docker-compose exec app chmod -R 775 storage bootstrap/cache
+  docker-compose exec app chmod -R 777 storage bootstrap/cache
   ```
 2. Установите PHP-зависимости **внутри контейнера**:
    ```bash
