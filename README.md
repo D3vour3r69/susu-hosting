@@ -53,8 +53,8 @@ cp .env.example .env
    ```
 5. Запустите парсеры для сотрудников и начальников, это может занять какое-то время
    ```bash
-   php artisan app:parse-structure
-   php artisan app:parse-employees      
+   docker-compose exec app php artisan app:parse-structure
+   docker-compose exec app php artisan app:parse-employees      
    ```
 ## Проверка работоспособности
 
