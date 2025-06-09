@@ -55,8 +55,7 @@ class ParseStructureCommand extends Command
 
             return [
                 'name' => $columns->eq(0)->text(),
-//                'head' => $this->extractHeadName($columns->eq(1)->text()),
-                'head' => 'Начальник',
+                'head' => $this->extractHeadName($columns->eq(1)->text()),
                 'position' => $positionText,
                 'email' => $this->extractEmail($columns->eq(4)),
             ];

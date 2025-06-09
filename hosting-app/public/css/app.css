@@ -57,3 +57,8 @@
         transform: translate(-50%, -400px);
     }
 }
+
+
+.bg-secondary{
+    background-color: rgb(13 110 253) !important;
+}

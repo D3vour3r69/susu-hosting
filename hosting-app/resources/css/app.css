@@ -147,3 +147,7 @@
     font-weight: 900;
     font-size: 115px;
 }
+
+.bg-secondary{
+    background-color: rgb(13 110 253);
+}
