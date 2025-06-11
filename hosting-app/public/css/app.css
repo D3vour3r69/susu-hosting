@@ -57,3 +57,16 @@
         transform: translate(-50%, -400px);
     }
 }
+
+.bg-secondary
+{
+    background-color: #4d76c1 !important;;
+}
+
+.w-100{
+    width: fit-content;
+}
+.btn .btn-success .w-100
+{
+    width: fit-content;
+}

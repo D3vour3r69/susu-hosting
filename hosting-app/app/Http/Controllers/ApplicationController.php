@@ -93,6 +93,11 @@ class ApplicationController extends Controller
         return view('applications.create', compact('heads', 'features', 'responsibles', 'unit'));
     }
 
+    public function destroy(Application $application)
+    {
+        $application->delete();
+        return redirect()->route('applications.index');
+    }
     public function approve(Application $application)
     {
         $this->authorize('manage', $application);
@@ -164,7 +169,7 @@ class ApplicationController extends Controller
             'features.*' => 'required|exists:feature_items,id',
             'notes' => 'nullable|string|max:1000',
             'status' => 'required|in:active,inactive,completed',
-            'domain' => 'required|string|max:255',
+            'domain' => 'required|string|max:255|unique:applications',
             'responsible_id' => 'required|exists:users,id',
             'head_id' => 'required|exists:heads,id',
         ]);

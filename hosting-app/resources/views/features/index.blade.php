@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <div class="container">
         <div class="card shadow-lg">
             <div class="card-header bg-primary text-white">
@@ -48,17 +49,21 @@
                             <form action="{{ route('features.items.store', $feature) }}" method="POST">
                                 @csrf
                                 <div class="row g-3">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <input type="text" name="name" class="form-control"
                                                placeholder="Название параметра" required>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+                                        <input type="text" name="description" class="form-control"
+                                               placeholder="Описание" required>
+                                    </div>
+                                    <div class="col-md-3">
                                         <input type="text" name="slug" class="form-control"
                                                placeholder="Уникальный идентификатор(Slug)" required>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <button type="submit" class="btn btn-success w-100">
-                                            <i class="fas fa-plus"></i> Добавить вариант
+                                            <i class="fas fa-plus"> Добавить вариант</i>
                                         </button>
                                     </div>
                                 </div>
