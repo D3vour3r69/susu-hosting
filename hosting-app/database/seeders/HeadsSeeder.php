@@ -8,33 +8,35 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Symfony\Component\BrowserKit\HttpBrowser;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpClient\HttpClient;
 
 class HeadsSeeder extends Seeder
 {
     private $targetSections = [
         'Отделы',
-        'Высшие школы и институты'
+        'Высшие школы и институты',
     ];
 
     private $allowedUnits = [
         'Высшая школа экономики и управления',
         'Высшая школа электроники и компьютерных наук',
         'Отдел',
-        'Кафедра'
+        'Кафедра',
     ];
 
-    function mb_ucfirst(string $string): string
+    public function mb_ucfirst(string $string): string
     {
-        return mb_strtoupper(mb_substr($string, 0, 1)) . mb_strtolower(mb_substr($string, 1));
+        return mb_strtoupper(mb_substr($string, 0, 1)).mb_strtolower(mb_substr($string, 1));
     }
 
     private function parseEmail(Crawler $row): ?string
     {
         try {
             $emailCell = $row->filter('td.views-field-field-email');
-            if ($emailCell->count() === 0) return null;
+            if ($emailCell->count() === 0) {
+                return null;
+            }
 
             // Получаем весь текст ячейки и разбиваем на строки
             $rawText = $emailCell->text();
@@ -44,7 +46,7 @@ class HeadsSeeder extends Seeder
             $emailLine = null;
             for ($i = count($lines) - 1; $i >= 0; $i--) {
                 $line = trim($lines[$i]);
-                if (!empty($line)) {
+                if (! empty($line)) {
                     $emailLine = $line;
                     break;
                 }
@@ -68,7 +70,8 @@ class HeadsSeeder extends Seeder
             return null;
 
         } catch (\Exception $e) {
-            $this->command->error("Ошибка парсинга email: " . $e->getMessage());
+            $this->command->error('Ошибка парсинга email: '.$e->getMessage());
+
             return null;
         }
     }
@@ -90,15 +93,20 @@ class HeadsSeeder extends Seeder
                 if (in_array($sectionName, $this->targetSections)) {
                     $currentSection = $sectionName;
                     $this->command->info("=== АКТИВНЫЙ РАЗДЕЛ: {$currentSection} ===");
+
                     continue;
                 }
             }
 
             // Обрабатываем только целевые разделы
-            if (!$currentSection) continue;
+            if (! $currentSection) {
+                continue;
+            }
 
             // Парсим только строки с данными
-            if ($rowCrawler->filter('td.views-field-title')->count() === 0) continue;
+            if ($rowCrawler->filter('td.views-field-title')->count() === 0) {
+                continue;
+            }
 
             // Нормализация названия
             $unitName = trim($rowCrawler->filter('td.views-field-title')->text());
@@ -113,8 +121,9 @@ class HeadsSeeder extends Seeder
                     break;
                 }
             }
-            if (!$isAllowed) {
+            if (! $isAllowed) {
                 $this->command->warn("ПРОПУЩЕНО: {$unitName}");
+
                 continue;
             }
 
@@ -128,7 +137,7 @@ class HeadsSeeder extends Seeder
 
             // Email (добавлена проверка структуры)
             $email = $this->parseEmail($rowCrawler);
-            if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            if (! $email || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $email = Str::slug($headName).'@susu.ru'; // Генерация по ФИО
                 $this->command->warn("СГЕНЕРИРОВАН EMAIL: {$email}");
             }

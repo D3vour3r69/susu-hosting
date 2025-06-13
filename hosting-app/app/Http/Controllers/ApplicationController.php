@@ -2,15 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Feature;
 use App\Models\Application;
 use App\Models\Head;
 use App\Models\Unit;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class ApplicationController extends Controller
 {
@@ -25,8 +21,8 @@ class ApplicationController extends Controller
         $selectedUnitId = $request->input('unit_id');
 
         $applications = Application::with(['user', 'unit'])
-            ->when($selectedUnitId, function($query) use ($selectedUnitId) {
-                $query->whereHas('unit', function($q) use ($selectedUnitId) {
+            ->when($selectedUnitId, function ($query) use ($selectedUnitId) {
+                $query->whereHas('unit', function ($q) use ($selectedUnitId) {
                     $q->where('id', $selectedUnitId);
                 });
             })
@@ -47,12 +43,12 @@ class ApplicationController extends Controller
         if (auth()->user()->hasRole('admin')) {
             $query->with(['featureItems.feature', 'unit', 'user']);
         } elseif (auth()->user()->hasRole('user_head')) {
-            $query->whereHas('unit', function($q) {
+            $query->whereHas('unit', function ($q) {
                 $q->where('head_id', auth()->id());
             });
         } else {
             $query->where('user_id', auth()->id());
-            if (!$showCompleted) {
+            if (! $showCompleted) {
                 $query->where('status', '!=', 'completed');
             }
         }
@@ -62,15 +58,13 @@ class ApplicationController extends Controller
         }
 
         if ($domain) {
-            $query->where('domain', 'like', '%' . $domain . '%');
+            $query->where('domain', 'like', '%'.$domain.'%');
         }
-
 
         $applications = $query->latest()->paginate(10);
 
         return view('applications.index', compact('applications', 'showCompleted', 'domain', 'status'));
     }
-
 
     public function create()
     {
@@ -78,11 +72,11 @@ class ApplicationController extends Controller
         $user = auth()->user();
         $unit = $user->positions->first()->unit ?? null;
 
-        if (!$unit) {
+        if (! $unit) {
             abort(403, 'У пользователя не найдено подразделение');
         }
 
-        $responsibles = \App\Models\User::whereHas('positions', function($query) use ($unit) {
+        $responsibles = \App\Models\User::whereHas('positions', function ($query) use ($unit) {
             $query->where('unit_id', $unit->id);
         })->get();
 
@@ -105,7 +99,7 @@ class ApplicationController extends Controller
         $application->update([
             'status' => 'completed',
             'approved' => true,
-            'approved_at' => now()
+            'approved_at' => now(),
         ]);
 
         return back()->with('success', 'Заявка одобрена');
@@ -116,8 +110,8 @@ class ApplicationController extends Controller
 
         $query = Application::where('approved', true);
 
-        if (!auth()->user()->hasRole('admin')) {
-            $query->whereHas('unit', function($q) {
+        if (! auth()->user()->hasRole('admin')) {
+            $query->whereHas('unit', function ($q) {
                 $q->where('head_id', auth()->id());
             });
         }
@@ -138,14 +132,12 @@ class ApplicationController extends Controller
         if ($application->status === 'completed') {
             $application->update([
                 'status' => 'active',
-                'approved' => false
+                'approved' => false,
             ]);
-        }
-        else
-        {
+        } else {
             $application->update([
                 'status' => 'inactive',
-                'approved' => false
+                'approved' => false,
             ]);
         }
 
@@ -189,7 +181,8 @@ class ApplicationController extends Controller
 
             return redirect()->route('applications.index')->with('success', 'Записка создана!');
         } catch (\Exception $e) {
-            \Log::error('Ошибка: ' . $e->getMessage());
+            \Log::error('Ошибка: '.$e->getMessage());
+
             return back()->withInput()->withErrors(['error' => 'Ошибка создания.']);
         }
     }
@@ -198,23 +191,21 @@ class ApplicationController extends Controller
     {
         $this->authorize('view', $application);
 
-
         $application->load([
             'unit.head',
             'responsible',
             'featureItems',
-            'head'
+            'head',
         ]);
 
-//        $heads = $application->heads
-//
-//
-//        $head = $heads->first();
-
+        //        $heads = $application->heads
+        //
+        //
+        //        $head = $heads->first();
 
         $pdf = PDF::loadView('applications.pdf', [
             'application' => $application,
-//            'head' => $head
+            //            'head' => $head
         ]);
 
         $pdf->setOption('defaultFont', 'times');

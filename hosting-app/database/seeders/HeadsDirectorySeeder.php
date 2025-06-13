@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Head;
 use App\Models\Unit;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class HeadsDirectorySeeder extends Seeder
@@ -45,7 +44,7 @@ class HeadsDirectorySeeder extends Seeder
                 'position' => 'Проректор по цифровой трансформации',
                 'unit_name' => 'Отдел цифровой трансформации',
                 'email' => 'evgkab@susu.ru',
-                ],
+            ],
         ];
 
         foreach ($heads as $headData) {

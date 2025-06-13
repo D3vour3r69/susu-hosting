@@ -5,12 +5,11 @@ namespace Database\Seeders;
 use App\Models\Position;
 use App\Models\Unit;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\BrowserKit\HttpBrowser;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpClient\HttpClient;
 
 class EmployeeSeeder extends Seeder
 {
@@ -30,8 +29,8 @@ class EmployeeSeeder extends Seeder
         '/^[aа]дминистраци(я|и)/ui' => 'Администраци$1',
     ];
 
-// Универсальная функция нормализации
-    function normalizeName(string $rawName): string
+    // Универсальная функция нормализации
+    public function normalizeName(string $rawName): string
     {
         $name = trim($rawName);
 
@@ -42,18 +41,15 @@ class EmployeeSeeder extends Seeder
             $name
         );
 
-
-
         return $name;
     }
-    function cleanEmail(string $rawEmail): string
+
+    public function cleanEmail(string $rawEmail): string
     {
 
         $email = trim(preg_replace('/^E-mail:\s*/i', '', $rawEmail));
 
-
         $email = str_ireplace(['[at]', '[dot]'], ['@', '.'], $email);
-
 
         $email = preg_replace('/\s+/u', '', $email);
 
@@ -63,7 +59,7 @@ class EmployeeSeeder extends Seeder
     public function run()
     {
         $baseUrl = 'https://www.susu.ru';
-        $url = $baseUrl . '/ru/employee';
+        $url = $baseUrl.'/ru/employee';
 
         $browser = new HttpBrowser(HttpClient::create());
 
@@ -75,7 +71,7 @@ class EmployeeSeeder extends Seeder
             // Получаем ссылки на сотрудников из элементов .views-row a
             $employeeLinks = $crawler->filter('.views-row a')->links();
 
-            $this->command->info("Найдено сотрудников на странице: " . count($employeeLinks));
+            $this->command->info('Найдено сотрудников на странице: '.count($employeeLinks));
 
             foreach ($employeeLinks as $link) {
                 $profileUrl = $link->getURI();
@@ -89,8 +85,9 @@ class EmployeeSeeder extends Seeder
                     ? trim($profileCrawler->filter('h1.page-header')->text())
                     : null;
 
-                if (!$fullName) {
+                if (! $fullName) {
                     $this->command->warn("Не удалось получить ФИО для {$profileUrl}");
+
                     continue;
                 }
 
@@ -160,23 +157,23 @@ class EmployeeSeeder extends Seeder
 
                 // Связываем пользователя с должностями (pivot)
                 $positionIds = collect($positionModels)->pluck('id')->toArray();
-                if (!empty($positionIds)) {
+                if (! empty($positionIds)) {
                     $user->positions()->syncWithoutDetaching($positionIds);
                 }
 
-                $this->command->info("Сотрудник {$fullName} сохранён с должностями: " . implode(', ', $positions) . " и подразделениями: " . implode(', ', $units));
+                $this->command->info("Сотрудник {$fullName} сохранён с должностями: ".implode(', ', $positions).' и подразделениями: '.implode(', ', $units));
             }
 
             // Пагинация: ищем ссылку на следующую страницу
             $nextLink = $crawler->filter('ul.pagination li.next a');
 
             if ($nextLink->count() === 0) {
-                $this->command->info("Достигнута последняя страница, парсинг завершён.");
+                $this->command->info('Достигнута последняя страница, парсинг завершён.');
                 break;
             }
 
             $nextHref = $nextLink->attr('href');
-            $url = $baseUrl . $nextHref;
+            $url = $baseUrl.$nextHref;
         }
     }
 }

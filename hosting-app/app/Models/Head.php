@@ -17,6 +17,7 @@ class Head extends Model
     {
         return $this->belongsTo(Unit::class);
     }
+
     public function getAddressTitleAttribute()
     {
         // Заменяем "Начальник" на "Начальнику" и т.д.

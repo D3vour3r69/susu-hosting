@@ -5,6 +5,7 @@
         "spatie/laravel-csp": "^3.13"
     },
     "require-dev": {
-        "beyondcode/laravel-er-diagram-generator": "^4.0"
+        "beyondcode/laravel-er-diagram-generator": "^4.0",
+        "laravel/pint": "^1.22"
     }
 }
