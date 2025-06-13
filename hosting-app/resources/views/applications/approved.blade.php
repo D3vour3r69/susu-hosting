@@ -43,7 +43,9 @@
                     <div class="alert alert-info">Нет одобренных заявок</div>
                 @endforelse
 
-                {{ $applications->links() }}
+                <div class="d-flex justify-content-center mt-4">
+                    {{ $applications->appends(request()->query())->links('pagination::bootstrap-5') }}
+                </div>
             </div>
         </div>
     </div>

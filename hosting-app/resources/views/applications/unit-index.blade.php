@@ -86,9 +86,9 @@
                             </div>
                         @endforeach
                     </div>
-{{--                    <div class="mt-3">--}}
-{{--                        {{ $applications->links() }}--}}
-{{--                    </div>--}}
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ $applications->appends(request()->query())->links('pagination::bootstrap-5') }}
+                    </div>
                 @endif
             </div>
         </div>
