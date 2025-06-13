@@ -12,7 +12,7 @@ class ApplicationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['admin', 'user_head']);
+        return true;
     }
 
     public function approve(User $user)

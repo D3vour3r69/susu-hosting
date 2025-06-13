@@ -20,14 +20,32 @@ class ApplicationController extends Controller
         $units = Unit::with('head')->get();
         $selectedUnitId = $request->input('unit_id');
 
-        $applications = Application::with(['user', 'unit'])
-            ->when($selectedUnitId, function ($query) use ($selectedUnitId) {
-                $query->whereHas('unit', function ($q) use ($selectedUnitId) {
-                    $q->where('id', $selectedUnitId);
-                });
-            })
-            ->orderByDesc('created_at')
-            ->paginate(10);
+        $query = Application::with(['user', 'unit']);
+
+        if (auth()->user()->hasRole('admin')) {
+            // Админ видит все заявки
+            if ($selectedUnitId) {
+                $query->where('unit_id', $selectedUnitId);
+            }
+        } elseif (auth()->user()->hasRole('user_head')) {
+            // Руководитель видит заявки всех сотрудников своего отдела
+            $headUnitIds = auth()->user()->positions->pluck('unit_id')->toArray();
+
+            $query->whereIn('unit_id', $headUnitIds);
+
+            if ($selectedUnitId && in_array($selectedUnitId, $headUnitIds)) {
+                $query->where('unit_id', $selectedUnitId);
+            }
+        } else {
+            // Обычный пользователь видит только свои заявки
+            $query->where('user_id', auth()->id());
+
+            if ($selectedUnitId) {
+                $query->where('unit_id', $selectedUnitId);
+            }
+        }
+
+        $applications = $query->orderByDesc('created_at')->paginate(10);
 
         return view('applications.unit-index', compact('applications', 'units', 'selectedUnitId'));
     }
@@ -46,7 +64,8 @@ class ApplicationController extends Controller
             $query->whereHas('unit', function ($q) {
                 $q->where('head_id', auth()->id());
             });
-        } else {
+        }
+        else {
             $query->where('user_id', auth()->id());
             if (! $showCompleted) {
                 $query->where('status', '!=', 'completed');
