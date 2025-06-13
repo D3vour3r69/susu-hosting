@@ -30,5 +30,4 @@ class RoleFactory extends Factory
             'name' => 'admin',
         ]);
     }
-
 }

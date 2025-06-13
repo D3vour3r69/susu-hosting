@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Application;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ApplicationPolicy
 {
@@ -26,6 +25,7 @@ class ApplicationPolicy
         return $user->hasRole('admin') ||
             ($user->hasRole('user_head') && $application->unit->head_id == $user->id);
     }
+
     /**
      * Determine whether the user can view the model.
      */

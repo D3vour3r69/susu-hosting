@@ -42,6 +42,7 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
     public function userHead()
     {
         return $this->afterCreating(function (User $user) {
@@ -57,6 +58,7 @@ class UserFactory extends Factory
             $user->assignRole($role);
         });
     }
+
     public function regularUser()
     {
         return $this->afterCreating(function (User $user) {

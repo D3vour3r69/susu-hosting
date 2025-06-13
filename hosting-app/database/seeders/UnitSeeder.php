@@ -35,8 +35,8 @@ class UnitSeeder extends Seeder
                 'head_id' => '5',
             ],
             [
-                'name'=>'Отдел менеджмента',
-                'head_id' =>'6',
+                'name' => 'Отдел менеджмента',
+                'head_id' => '6',
             ],
         ];
 
@@ -47,6 +47,6 @@ class UnitSeeder extends Seeder
             );
         }
 
-        $this->command->info('Создано ' . count($units) . ' подразделений');
+        $this->command->info('Создано '.count($units).' подразделений');
     }
 }

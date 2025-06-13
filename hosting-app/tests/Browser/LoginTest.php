@@ -11,17 +11,18 @@ use Tests\DuskTestCase;
 class LoginTest extends DuskTestCase
 {
     use DatabaseMigrations;
-    public function testExample(): void
+
+    public function test_example(): void
     {
-//        $realFeature = Feature::all();
-//        $password = '123';
-//        $user = User::create([
-//                'name' => 'Зайцев Андрей Владимирович',
-//                'email' => 'zaycev@example.com',
-//                'password' => bcrypt($password),
-//                'role' => 'user_head',
-//
-//        ]);
+        //        $realFeature = Feature::all();
+        //        $password = '123';
+        //        $user = User::create([
+        //                'name' => 'Зайцев Андрей Владимирович',
+        //                'email' => 'zaycev@example.com',
+        //                'password' => bcrypt($password),
+        //                'role' => 'user_head',
+        //
+        //        ]);
         $userHead = User::factory()->userHead()->create([
             'name' => 'Зайцев Андрей Владимирович',
             'email' => 'zaycev@example.com',

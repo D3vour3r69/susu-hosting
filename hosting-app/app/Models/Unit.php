@@ -10,7 +10,7 @@ class Unit extends Model
     protected $fillable = [
         'name',
         'external_id',
-        'head_id'
+        'head_id',
     ];
 
     public function head()
@@ -39,7 +39,6 @@ class Unit extends Model
     {
         return $this->head_id === $user->id;
     }
-
 
     public function applications()
     {

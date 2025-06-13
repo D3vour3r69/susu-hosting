@@ -13,11 +13,12 @@ use Symfony\Component\DomCrawler\Crawler;
 class ParseStructureCommand extends Command
 {
     protected $signature = 'app:parse-structure';
+
     protected $description = 'Parse departments structure from susu.ru';
 
     public function handle()
     {
-        $client = new Client();
+        $client = new Client;
         $response = $client->request('GET', 'https://www.susu.ru/ru/university/official/structure');
         $html = $response->getBody()->getContents();
         $crawler = new Crawler($html);
@@ -26,11 +27,12 @@ class ParseStructureCommand extends Command
         $tables = $crawler->filter('table.views-table');
 
         if ($tables->count() === 0) {
-            $this->error("❌ Таблицы с подразделениями не найдены");
+            $this->error('❌ Таблицы с подразделениями не найдены');
+
             return;
         }
 
-        $this->info("✅ Найдено таблиц: " . $tables->count());
+        $this->info('✅ Найдено таблиц: '.$tables->count());
 
         $bar = $this->output->createProgressBar($tables->count());
         $bar->start();
@@ -48,7 +50,9 @@ class ParseStructureCommand extends Command
     {
         $units = $table->filter('tbody tr')->each(function (Crawler $row) {
             $columns = $row->filter('td');
-            if ($columns->count() < 5) return null;
+            if ($columns->count() < 5) {
+                return null;
+            }
 
             // Извлекаем должность руководителя
             $positionText = $this->extractPosition($columns->eq(1)->text());
@@ -62,7 +66,7 @@ class ParseStructureCommand extends Command
         });
 
         $units = array_filter($units);
-        $this->info("\nОбрабатывается таблица с " . count($units) . " подразделениями");
+        $this->info("\nОбрабатывается таблица с ".count($units).' подразделениями');
 
         foreach ($units as $unitData) {
             $this->processUnit($unitData);
@@ -71,7 +75,7 @@ class ParseStructureCommand extends Command
 
     private function processUnit(array $unitData)
     {
-        if (!filter_var($unitData['email'], FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($unitData['email'], FILTER_VALIDATE_EMAIL)) {
             $this->warn("⚠️ Invalid email: {$unitData['email']} for {$unitData['name']}");
             $unitData['email'] = $this->generateEmail($unitData['name']);
         }
@@ -89,7 +93,7 @@ class ParseStructureCommand extends Command
         $unit = Unit::firstOrCreate(
             ['name' => $normalizedName],
             [
-                ['head_id' => $user->id]
+                ['head_id' => $user->id],
             ]
         );
 
@@ -168,7 +172,7 @@ class ParseStructureCommand extends Command
     private function cleanText(string $text): string
     {
         // Замена неразрывных пробелов и специальных символов
-        $text = str_replace(["\u{00A0}", "[at]", "(at)", "[dot]", "(dot)", " "], [" ", "@", "@", ".", ".", ""], $text);
+        $text = str_replace(["\u{00A0}", '[at]', '(at)', '[dot]', '(dot)', ' '], [' ', '@', '@', '.', '.', ''], $text);
 
         // Удаление телефонных номеров (шаблоны вида XXX-XX-XX)
         $text = preg_replace('/\d{2,5}-\d{2,3}-\d{2,4}/', '', $text);
@@ -182,13 +186,14 @@ class ParseStructureCommand extends Command
 
         foreach ($matches[0] ?? [] as $candidate) {
             // Фильтрация ложных срабатываний (исключаем номера телефонов)
-            if (!preg_match('/^\d+$/', explode('@', $candidate)[0]) // не только цифры
-                && !preg_match('/-\d/', $candidate) // нет цифр после дефиса
+            if (! preg_match('/^\d+$/', explode('@', $candidate)[0]) // не только цифры
+                && ! preg_match('/-\d/', $candidate) // нет цифр после дефиса
                 && filter_var($candidate, FILTER_VALIDATE_EMAIL)
             ) {
                 return $candidate;
             }
         }
+
         return null;
     }
 
@@ -198,12 +203,12 @@ class ParseStructureCommand extends Command
         $parts = preg_split('/\s+/', $transliterated);
 
         // Фильтрация и обработка частей
-        $validParts = array_filter($parts, fn($p) => !preg_match('/^\d+$/', $p));
+        $validParts = array_filter($parts, fn ($p) => ! preg_match('/^\d+$/', $p));
         $lastPart = end($validParts) ?: 'unknown';
 
         // Очистка от запрещенных символов
         $email = Str::lower(preg_replace('/[^a-z0-9._-]/i', '', $lastPart));
 
-        return $email . '@susu.ru';
+        return $email.'@susu.ru';
     }
 }

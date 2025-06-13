@@ -7,7 +7,6 @@ use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Artisan;
 use Laravel\Dusk\TestCase as BaseTestCase;
 use PHPUnit\Framework\Attributes\BeforeClass;
 
@@ -22,6 +21,7 @@ abstract class DuskTestCase extends BaseTestCase
             static::startChromeDriver(['--port=9515']);
         }
     }
+
     /**
      * Create the RemoteWebDriver instance.
      */
@@ -34,7 +34,7 @@ abstract class DuskTestCase extends BaseTestCase
         ])->unless($this->hasHeadlessDisabled(), function (Collection $items) {
             return $items->merge([
                 '--disable-gpu',
-//                '--headless=new',
+                //                '--headless=new',
             ]);
         })->all());
 

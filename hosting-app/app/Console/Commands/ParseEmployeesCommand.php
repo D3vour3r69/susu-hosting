@@ -14,11 +14,12 @@ use Symfony\Component\DomCrawler\Crawler;
 class ParseEmployeesCommand extends Command
 {
     protected $signature = 'app:parse-employees';
+
     protected $description = 'Parse employees from susu.ru';
 
     public function handle()
     {
-        $client = new Client();
+        $client = new Client;
         $baseUrl = 'https://www.susu.ru';
 
         $processed = 0;
@@ -39,14 +40,14 @@ class ParseEmployeesCommand extends Command
             $crawler = new Crawler($html);
 
             $profileLinks = $crawler->filter('.item-list .views-field-title-1 a')
-                ->each(fn (Crawler $node) => $baseUrl . $node->attr('href'));
+                ->each(fn (Crawler $node) => $baseUrl.$node->attr('href'));
 
             if (empty($profileLinks)) {
                 $this->info("Ссылки на профили не найдены на странице {$page}");
                 break;
             }
 
-            $this->info("Найдено сотрудников на странице: " . count($profileLinks));
+            $this->info('Найдено сотрудников на странице: '.count($profileLinks));
             $bar = $this->output->createProgressBar(count($profileLinks));
             $bar->start();
 
@@ -54,7 +55,7 @@ class ParseEmployeesCommand extends Command
                 try {
                     $this->processProfile($client, $profileUrl);
                 } catch (\Exception $e) {
-                    $this->error("Ошибка обработки {$profileUrl}: " . $e->getMessage());
+                    $this->error("Ошибка обработки {$profileUrl}: ".$e->getMessage());
                 }
                 $bar->advance();
             }
@@ -65,7 +66,7 @@ class ParseEmployeesCommand extends Command
             $nextPageLink = $crawler->filter('.pagination li.next a');
             $nextPageExists = $nextPageLink->count() > 0;
 
-            $this->info("Следующая страница: " . ($nextPageExists ? 'Да' : 'Нет'));
+            $this->info('Следующая страница: '.($nextPageExists ? 'Да' : 'Нет'));
 
             $page++;
         } while ($nextPageExists);
@@ -118,6 +119,7 @@ class ParseEmployeesCommand extends Command
 
         // Генерация email на основе ФИО
         $name = $crawler->filter('h1.page-header')->text();
+
         return $this->generateEmail($name);
     }
 
@@ -155,6 +157,7 @@ class ParseEmployeesCommand extends Command
                 ]);
             }
         }
+
         return null;
     }
 

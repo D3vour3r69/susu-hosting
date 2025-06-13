@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Feature;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class FeatureSeeder extends Seeder
@@ -13,7 +12,7 @@ class FeatureSeeder extends Seeder
         $programming = Feature::create([
             'slug' => 'programming-language',
             'name' => 'Язык программирования',
-            'description' => 'Выбор языка программирования'
+            'description' => 'Выбор языка программирования',
         ]);
 
         $programming->items()->createMany([
@@ -33,18 +32,18 @@ class FeatureSeeder extends Seeder
         $database = Feature::create([
             'slug' => 'database',
             'name' => 'База данных',
-            'description' => 'Выбор базы данных'
+            'description' => 'Выбор базы данных',
         ]);
 
         $database->items()->createMany([
             ['slug' => 'mysql', 'name' => 'MySQL', 'description' => 'MySQL database'],
-            ['slug' => 'postgresql', 'name' => 'PostgreSQL', 'description' => 'PostgreSQL database']
+            ['slug' => 'postgresql', 'name' => 'PostgreSQL', 'description' => 'PostgreSQL database'],
         ]);
 
         $docker = Feature::create([
             'slug' => 'docker',
             'name' => 'Docker',
-            'description' => 'Нужен ли докер?'
+            'description' => 'Нужен ли докер?',
         ]);
 
         $docker->items()->createMany([

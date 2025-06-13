@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -23,6 +22,6 @@ class RoleSeeder extends Seeder
                 ['name' => $role]
             );
         }
-        $this->command->info('Создано ' . count($roles) . ' ролей');
+        $this->command->info('Создано '.count($roles).' ролей');
     }
 }

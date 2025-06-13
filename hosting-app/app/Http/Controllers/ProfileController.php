@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Unit;
-use App\Models\User;
 use App\Models\Position;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
@@ -31,13 +29,13 @@ class ProfileController extends Controller
         $request->validate([
             'unit_id' => 'required|exists:units,id',
             'position_name' => 'required|string|max:255', // Поле для названия должности
-            'is_head' => 'sometimes|boolean'
+            'is_head' => 'sometimes|boolean',
         ]);
 
         // Создаем или находим должность в выбранном подразделении
         $position = Position::firstOrCreate([
             'unit_id' => $request->unit_id,
-            'name' => $request->position_name
+            'name' => $request->position_name,
         ]);
 
         // Проверяем, не привязана ли уже эта должность к пользователю

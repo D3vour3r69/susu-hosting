@@ -11,8 +11,6 @@ class UnitPolicy
     {
         return $user->hasRole('admin') || $unit->head_id == $user->id;
     }
-    public function __construct()
-    {
 
-    }
+    public function __construct() {}
 }

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Application extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'unit_id',
@@ -19,6 +20,7 @@ class Application extends Model
         'approved_at',
         'domain',
     ];
+
     public function responsible()
     {
         return $this->belongsTo(User::class, 'responsible_id');
@@ -28,14 +30,17 @@ class Application extends Model
     {
         return $this->belongsTo(User::class);
     }
+
     public function unit()
     {
         return $this->belongsTo(Unit::class);
     }
+
     public function head()
     {
         return $this->belongsTo(Head::class);
     }
+
     public function getFormattedCreatedAtAttribute()
     {
         return $this->created_at->format('d.m.Y H:i');
@@ -51,7 +56,7 @@ class Application extends Model
         return [
             'active' => 'Активно',
             'inactive' => 'Не активно',
-            'completed' => 'Завершено'
+            'completed' => 'Завершено',
         ][$this->status];
     }
 }

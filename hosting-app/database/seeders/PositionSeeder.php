@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Position;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class PositionSeeder extends Seeder
@@ -28,43 +27,43 @@ class PositionSeeder extends Seeder
             ],
             [
                 'name' => 'Data engineer',
-                'unit_id' => 2
+                'unit_id' => 2,
             ],
             [
                 'name' => 'Data analytics',
-                'unit_id' => 2
+                'unit_id' => 2,
             ],
             [
                 'name' => 'Data scientist',
-                'unit_id' => 2
+                'unit_id' => 2,
             ],
             [
                 'name' => 'HR specialist',
-                'unit_id' => 3
+                'unit_id' => 3,
             ],
             [
                 'name' => 'DevOps engineer middle',
-                'unit_id' => 4
+                'unit_id' => 4,
             ],
             [
                 'name' => 'DevOps engineer team lead',
-                'unit_id' => 4
+                'unit_id' => 4,
             ],
             [
                 'name' => 'DevOps engineer senior',
-                'unit_id' => 4
+                'unit_id' => 4,
             ],
             [
                 'name' => 'Analyst',
-                'unit_id' => 5
+                'unit_id' => 5,
             ],
             [
                 'name' => 'Product manager',
-                'unit_id' => 6
+                'unit_id' => 6,
             ],
             [
                 'name' => 'Manager mean lead',
-                'unit_id' => 6
+                'unit_id' => 6,
             ],
 
         ];
@@ -74,6 +73,6 @@ class PositionSeeder extends Seeder
                 $position
             );
         }
-        $this->command->info('Создано ' . count($positions) . ' должностей');
+        $this->command->info('Создано '.count($positions).' должностей');
     }
 }

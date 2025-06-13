@@ -11,6 +11,7 @@ class Feature extends Model
         'name',
         'description',
     ];
+
     public function items()
     {
         return $this->hasMany(FeatureItem::class);
