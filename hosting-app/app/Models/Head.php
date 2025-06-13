@@ -27,4 +27,14 @@ class Head extends Model
             $this->position
         );
     }
+
+    public function getFullNameAttribute()
+    {
+        $originalFullName = $this->attributes['full_name'] ?? '';
+        return str_replace(
+            ['Подивилова Елена Олеговна', 'Латухин Дмитрий Викторович', 'Кабиольский Евгений Алексеевич'],
+            ['Подивиловой Елене Олеговне', 'Латухину Дмитрию Викторовичу', 'Кабиольскому Евгению Алексеевичу'],
+            $originalFullName
+        );
+    }
 }
