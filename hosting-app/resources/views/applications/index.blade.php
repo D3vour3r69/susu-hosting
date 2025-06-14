@@ -110,6 +110,19 @@
                     </div>
 
                     <div class="mt-4">
+                        <h5>Кем написано заявление:</h5>
+                        <div class="border p-3 rounded bg-light">
+                            @if(auth()->user()->hasRole('admin'))
+                                <a href="{{ route('admin.users.show', $application->user) }}">
+                                    {{ $application->user->name }}
+                                </a>
+                            @else
+                                {{ $application->user->name }}
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
                         <h5>На кого написано заявление:</h5>
                         <div class="border p-3 rounded bg-light">
                             {{ optional($application->head)->full_name ?? 'Начальник не выбран' }}

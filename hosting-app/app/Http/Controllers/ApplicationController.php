@@ -64,8 +64,7 @@ class ApplicationController extends Controller
             $query->whereHas('unit', function ($q) {
                 $q->where('head_id', auth()->id());
             });
-        }
-        else {
+        } else {
             $query->where('user_id', auth()->id());
             if (! $showCompleted) {
                 $query->where('status', '!=', 'completed');
@@ -109,8 +108,10 @@ class ApplicationController extends Controller
     public function destroy(Application $application)
     {
         $application->delete();
+
         return redirect()->route('applications.index');
     }
+
     public function approve(Application $application)
     {
         $this->authorize('manage', $application);
