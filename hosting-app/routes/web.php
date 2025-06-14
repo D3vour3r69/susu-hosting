@@ -43,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/applications/{application}/download', [ApplicationController::class, 'download'])
         ->name('applications.download');
 
-    Route::delete('/applications/{application}', [ApplicationController::class, 'destroy'])->name('applications.destroy');;
+    Route::delete('/applications/{application}', [ApplicationController::class, 'destroy'])->name('applications.destroy');
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
@@ -53,6 +53,13 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    Route::get('/admin/users', [App\Http\Controllers\UserController::class, 'index'])
+        ->name('admin.users.index');
+
+    Route::get('/admin/users/{user}', [App\Http\Controllers\UserController::class, 'show'])
+        ->name('admin.users.show');
+
     Route::get('/features', [FeatureController::class, 'index'])->name('features.index');
 
     Route::post('/features', [FeatureController::class, 'store'])->name('features.store');
