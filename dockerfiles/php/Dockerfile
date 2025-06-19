@@ -30,4 +30,4 @@ RUN composer dump-autoload --optimize
 
 # Права для Laravel
 RUN chown -R www-data:www-data /var/www/storage
-RUN chmod -R 775 /var/www/storage
+RUN chmod -R 777 /var/www/storage

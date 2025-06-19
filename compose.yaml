@@ -2,7 +2,7 @@
 services:
   app:
     build:
-      context: ./hosting-app  # Измените контекст сборки
+      context: ./hosting-app
       dockerfile: ../dockerfiles/php/Dockerfile
     volumes:
       - ./hosting-app:/var/www

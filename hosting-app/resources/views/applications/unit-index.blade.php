@@ -12,11 +12,8 @@
                         <div class="col-md-8">
                             <select name="unit_id" class="form-select">
                                 <option value="">Все подразделения</option>
-                                @foreach($units as $unit)
-                                    <option
-                                        value="{{ $unit->id }}"
-                                        {{ $selectedUnitId == $unit->id ? 'selected' : '' }}
-                                    >
+                                @foreach($units->sortBy('name') as $unit)
+                                    <option value="{{ $unit->id }}" {{ $selectedUnitId == $unit->id ? 'selected' : '' }}>
                                         {{ $unit->name }}
                                         @if($unit->head)
                                             (Руководитель: {{ $unit->head->name }})

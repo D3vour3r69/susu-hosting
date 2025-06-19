@@ -28,7 +28,7 @@ class ApplicationController extends Controller
                 $query->where('unit_id', $selectedUnitId);
             }
         } elseif (auth()->user()->hasRole('user_head')) {
-            // Руководитель видит заявки всех сотрудников своего отдела
+
             $headUnitIds = auth()->user()->positions->pluck('unit_id')->toArray();
 
             $query->whereIn('unit_id', $headUnitIds);
