@@ -16,15 +16,19 @@
                     <form action="{{ route('features.store') }}" method="POST">
                         @csrf
                         <div class="row g-3">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <input type="text" name="name" class="form-control"
                                        placeholder="Название категории" required>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <input type="text" name="slug" class="form-control"
                                        placeholder="Уникальный идентификатор" required>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
+                                <input type="text" name="description" class="form-control"
+                                       placeholder="Описание" required>
+                            </div>
+                            <div class="col-md-3">
                                 <button type="submit" class="btn btn-primary w-100">
                                     <i class="fas fa-plus"></i> Добавить
                                 </button>

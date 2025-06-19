@@ -105,7 +105,6 @@
                                             >
                                         </div>
 
-                                        <!-- Исправленный блок чекбокса -->
                                         <div class="col-md-2">
                                             <div class="form-check d-flex align-items-center h-100">
                                                 <input
