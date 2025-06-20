@@ -23,9 +23,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'show'])->name('profile.show');
-        //        Route::post('/units', [ProfileController::class, 'storeUnit'])->name('profile.units.store');
-        //        Route::put('/units/{unit}', [ProfileController::class, 'updateUnit'])->name('profile.units.update');
-        //        Route::delete('/units/{unit}', [ProfileController::class, 'destroyUnit'])->name('profile.units.destroy');
         Route::post('/profile/positions', [ProfileController::class, 'storePosition'])->name('profile.positions.store');
         Route::put('/positions/{position}', [ProfileController::class, 'updateHeadStatus'])->name('profile.positions.update');
         Route::delete('/positions/{position}', [ProfileController::class, 'destroyPosition'])->name('profile.positions.destroy');
@@ -33,12 +30,8 @@ Route::middleware(['auth'])->group(function () {
             return $unit->positions;
         });
     });
-
     Route::resource('applications', ApplicationController::class)
         ->except(['show', 'edit', 'update']);
-
-    Route::get('/applications/approved', [ApplicationController::class, 'approved'])
-        ->name('applications.approved');
 
     Route::get('/applications/{application}/download', [ApplicationController::class, 'download'])
         ->name('applications.download');
@@ -78,4 +71,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::post('/applications/{application}/reject', [ApplicationController::class, 'reject'])
         ->name('applications.reject');
+
+    Route::get('/applications/approved', [ApplicationController::class, 'approved'])
+        ->name('applications.approved');
 });

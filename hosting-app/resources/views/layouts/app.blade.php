@@ -53,7 +53,11 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('applications.unit-index') ? 'active' : '' }}"
                            href="{{ route('applications.unit-index') }}">
-                            <i class="fas fa-building me-2"></i>Заявки по подразделениям
+                            @if(auth()->user()->hasRole('admin'))
+                                <i class="fas fa-building me-2"></i>Заявки по подразделениям
+                            @else
+                                <i class="fas fa-building me-2"></i>Заявки по своему подразделению
+                            @endif
                         </a>
                     </li>
                     @if(auth()->user()->hasRole('admin'))
