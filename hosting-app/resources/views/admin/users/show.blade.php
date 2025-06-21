@@ -73,14 +73,27 @@
                         <h5 class="mb-0"><i class="fas fa-file-alt"></i> Служебные записки</h5>
                     </div>
                     <div class="card-body">
+                        <form method="GET" class="mb-4">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-auto">
+                                    <input type="text" name="domain" value="{{ old('domain', $domain) }}" class="form-control"
+                                           placeholder="Фильтр по домену">
+                                </div>
+
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-primary">Применить</button>
+                                    <a href="{{ route('admin.users.show', $user) }}" class="btn btn-outline-secondary">Сбросить</a>
+                                </div>
+                            </div>
+                        </form>
                         @if($applications->isNotEmpty())
                             @foreach($applications as $application)
                                 <div class="card mb-3 shadow-sm">
                                     <div class="card-header d-flex justify-content-between align-items-center bg-light">
                                         <div>
-                                    <span class="badge bg-{{ $application->status === 'active' ? 'success' : ($application->status === 'completed' ? 'secondary' : 'warning') }}">
-                                        {{ $application->status_text }}
-                                    </span>
+                                            <span class="badge bg-{{ $application->status === 'active' ? 'success' : ($application->status === 'completed' ? 'secondary' : 'warning') }}">
+                                                {{ $application->status_text }}
+                                            </span>
                                             <small class="text-muted ms-2">
                                                 {{ $application->created_at->format('d.m.Y H:i') }}
                                             </small>
