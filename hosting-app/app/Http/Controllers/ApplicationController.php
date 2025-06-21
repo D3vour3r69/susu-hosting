@@ -88,21 +88,23 @@ class ApplicationController extends Controller
     {
 
         $user = auth()->user();
-        $unit = $user->positions->first()->unit ?? null;
+        $userUnits = $user->positions->pluck('unit')->unique();
 
-        if (! $unit) {
+        if ($userUnits->isEmpty()) {
             abort(403, 'У пользователя не найдено подразделение');
         }
+        $units = $userUnits->all();
 
-        $responsibles = \App\Models\User::whereHas('positions', function ($query) use ($unit) {
-            $query->where('unit_id', $unit->id);
-        })->get();
+        $allResponsibles = \App\Models\User::whereHas('positions', function ($query) use ($userUnits) {
+            $query->whereIn('unit_id', $userUnits->pluck('id'));
+        })->with(['positions' => function($query) {
+            $query->with('unit');
+        }])->get()->toArray();
 
         $heads = \App\Models\Head::all();
-
         $features = \App\Models\Feature::with('items')->get();
 
-        return view('applications.create', compact('heads', 'features', 'responsibles', 'unit'));
+        return view('applications.create', compact('allResponsibles', 'units', 'heads', 'features'));
     }
 
     public function destroy(Application $application)
