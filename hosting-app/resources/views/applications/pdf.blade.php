@@ -174,7 +174,7 @@
 
     <div class="university-block">
         <div class="logo-container">
-            <img src="{{ public_path('storage/susu_logo.png') }}" class="logo" alt="Логотип">
+            <img src="{{ public_path('images/susu_logo.png')}}" class="logo" alt="Логотип">
         </div>
         <div class="university-text">
             <div class="ministry">

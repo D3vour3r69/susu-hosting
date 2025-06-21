@@ -4,7 +4,7 @@
          404
     </div>
     <div class="img">
-        <img src="storage/cat.png" alt="cat">
+        <img src="{{ asset('images/cat.png') }}" class="logo" alt="Логотип">
         <h1 class="okak">ОКАК</h1>
     </div>
 </div>

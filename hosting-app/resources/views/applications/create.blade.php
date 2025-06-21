@@ -66,7 +66,7 @@
                             @if($userUnits->count() > 1)
                                 <div class="mb-3">
                                     <label class="form-label">Выберите подразделение:</label>
-                                    <select name="unit_id" class="form-select" required>
+                                    <select name="unit_id" id="unit_select" class="form-select" required>
                                         @foreach($userUnits as $unit)
                                             <option value="{{ $unit->id }}">
                                                 {{ $unit->name }}
@@ -75,15 +75,13 @@
                                     </select>
                                 </div>
                             @else
-                                <input type="hidden" name="unit_id" value="{{$userUnits->first()->id }}">
+                                <input type="hidden" name="unit_id" id="unit_select" value="{{$userUnits->first()->id }}">
                             @endif
                         @endif
                             <div class="mb-3">
                                 <label for="responsible_id" class="form-label">Ответственный за сайт</label>
                                 <select name="responsible_id" id="responsible_id" class="form-select" required>
-                                    @foreach($responsibles as $responsible)
-                                        <option value="{{ $responsible->id }}">{{ $responsible->name }}</option>
-                                    @endforeach
+
                                 </select>
                             </div>
                         <div class="mb-3">
@@ -157,6 +155,7 @@
 @push('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('js/responsible.js') }}"></script>
     <script>
         $(document).ready(function() {
             $('#features_select').select2({
@@ -174,4 +173,8 @@
             });
         });
     </script>
+    <script>
+        window.allResponsibles = @json($allResponsibles ?? []);
+    </script>
+    <script src="{{ asset('js/responsible.js') }}"></script>
 @endpush
