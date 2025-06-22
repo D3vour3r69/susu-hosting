@@ -28,12 +28,10 @@ cp .env.example .env
 
 ## Установка
 
-1. Запустите контейнеры:
+1. Запустите контейнеры и выдайте права:
    ```bash
    docker-compose up -d --build
    ```
-# Важные замечания
-- Если возникают ошибки прав доступа, выполните:
   ```bash
   docker-compose exec app chmod -R 777 storage bootstrap/cache
   ```
