@@ -76,7 +76,7 @@ php artisan migrate:fresh --seed  --env=dusk.local
 ```bash
 docker compose exec app php artisan dusk
 ```
-##Остановка контейнеров
+## Остановка контейнеров
 
 Чтобы остановить контейнеры, используйте команду:
 ```bash
