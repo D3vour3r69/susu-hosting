@@ -53,8 +53,10 @@ cp .env.example .env
    ```
 5. Запустите парсеры для сотрудников и начальников, это может занять какое-то время
    ```bash
-   docker-compose exec app php artisan app:parse-structure
-   docker-compose exec app php artisan app:parse-employees      
+   docker-compose exec app php artisan app:parse-structure   
+   ```
+   ```bash
+   docker-compose exec app php artisan app:parse-employees
    ```
 ## Проверка работоспособности
 
@@ -63,7 +65,13 @@ cp .env.example .env
    Зайдите под пользователем Login: khudiakovata@susu.ru Password: 123 для проверки со стороны руководителя кафедры\отдела.
 
    Зайдите под администратором Login: admin@example.com Password: 123 для проверкисо стороны администратора веб-приложения.
- 
+Для тестирования приложения через Laravel Dusk выполните следующее
+```bash
+docker compose exec app php artisan serve --env=dusk.local --port=8000
+```
+```bash
+docker compose exec app php artisan dusk
+```
 Остановка контейнеров
 Чтобы остановить контейнеры, используйте команду:
 ```bash
