@@ -32,9 +32,9 @@ cp .env.example .env
    ```bash
    docker-compose up -d --build
    ```
-  ```bash
-  docker-compose exec app chmod -R 777 storage bootstrap/cache
-  ```
+   ```bash
+   docker-compose exec app chmod -R 777 storage bootstrap/cache
+   ```
 2. Установите PHP-зависимости **внутри контейнера**:
    ```bash
    docker-compose exec app composer install
