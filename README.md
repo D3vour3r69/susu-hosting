@@ -28,15 +28,13 @@ cp .env.example .env
 
 ## Установка
 
-1. Запустите контейнеры:
+1. Запустите контейнеры и выдайте права:
    ```bash
    docker-compose up -d --build
    ```
-# Важные замечания
-- Если возникают ошибки прав доступа, выполните:
-  ```bash
-  docker-compose exec app chmod -R 777 storage bootstrap/cache
-  ```
+   ```bash
+   docker-compose exec app chmod -R 777 storage bootstrap/cache
+   ```
 2. Установите PHP-зависимости **внутри контейнера**:
    ```bash
    docker-compose exec app composer install
@@ -53,8 +51,10 @@ cp .env.example .env
    ```
 5. Запустите парсеры для сотрудников и начальников, это может занять какое-то время
    ```bash
-   docker-compose exec app php artisan app:parse-structure
-   docker-compose exec app php artisan app:parse-employees      
+   docker-compose exec app php artisan app:parse-structure   
+   ```
+   ```bash
+   docker-compose exec app php artisan app:parse-employees
    ```
 ## Проверка работоспособности
 
@@ -63,8 +63,19 @@ cp .env.example .env
    Зайдите под пользователем Login: khudiakovata@susu.ru Password: 123 для проверки со стороны руководителя кафедры\отдела.
 
    Зайдите под администратором Login: admin@example.com Password: 123 для проверкисо стороны администратора веб-приложения.
- 
-Остановка контейнеров
+   
+## Для тестирования приложения через Laravel Dusk выполните следующее
+```bash
+docker compose exec app php artisan serve --env=dusk.local --port=8000
+```
+```bash
+php artisan migrate:fresh --seed  --env=dusk.local
+```
+```bash
+docker compose exec app php artisan dusk
+```
+## Остановка контейнеров
+
 Чтобы остановить контейнеры, используйте команду:
 ```bash
   docker-compose stop
