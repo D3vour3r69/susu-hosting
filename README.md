@@ -65,6 +65,7 @@ cp .env.example .env
    Зайдите под пользователем Login: khudiakovata@susu.ru Password: 123 для проверки со стороны руководителя кафедры\отдела.
 
    Зайдите под администратором Login: admin@example.com Password: 123 для проверкисо стороны администратора веб-приложения.
+   
 Для тестирования приложения через Laravel Dusk выполните следующее
 ```bash
 docker compose exec app php artisan serve --env=dusk.local --port=8000
