@@ -43,19 +43,17 @@ class UserFactory extends Factory
         ]);
     }
 
-    public function userHead()
-    {
-        return $this->afterCreating(function (User $user) {
-            $role = Role::firstOrCreate(['name' => 'user_head']);
-            $user->assignRole($role);
-        });
-    }
-
     public function admin()
     {
         return $this->afterCreating(function (User $user) {
-            $role = Role::firstOrCreate(['name' => 'admin']);
-            $user->assignRole($role);
+            $user->assignRole('admin');
+        });
+    }
+
+    public function userHead()
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('user_head');
         });
     }
 

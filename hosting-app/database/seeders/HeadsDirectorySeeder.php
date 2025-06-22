@@ -60,6 +60,6 @@ class HeadsDirectorySeeder extends Seeder
             );
         }
 
-        $this->command->info('Справочник руководителей успешно заполнен!');
+//        $this->command->info('Справочник руководителей успешно заполнен!');
     }
 }

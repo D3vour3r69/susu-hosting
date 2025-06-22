@@ -37,7 +37,7 @@
         @endif
 
         @forelse($applications as $application)
-            <div class="card mb-4 shadow-sm">
+            <div class="card mb-4 shadow-sm" id="application-row-{{ $application->id }}">
                 <div class="card-header d-flex justify-content-between align-items-center bg-light">
                     <div>
                         <span class="badge bg-{{ $application->status === 'active' ? 'success' : ($application->status === 'completed' ? 'secondary' : 'warning') }}">
@@ -52,7 +52,8 @@
                             @if($application->status === 'active')
                                 <form action="{{ route('applications.approve', $application) }}" method="POST" class="d-inline">
                                     @csrf
-                                    <button type="submit" class="btn btn-sm btn-success" title="Одобрить">
+                                    <button type="submit" class="btn btn-sm btn-success" title="Одобрить"
+                                            id="approve-button-{{ $application->id }}">
                                         <i class="fas fa-check"></i>
                                     </button>
                                 </form>
@@ -60,14 +61,16 @@
                             @if(!($application->status === 'inactive'))
                                 <form action="{{ route('applications.reject', $application) }}" method="POST" class="d-inline">
                                     @csrf
-                                    <button type="submit" class="btn btn-sm btn-warning" title="Отклонить">
+                                    <button type="submit" class="btn btn-sm btn-warning" title="Отклонить"
+                                            id="reject-button-{{ $application->id }}">
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </form>
-                                @endif
+                            @endif
                         @endif
 
                         <a href="{{ route('applications.download', $application) }}"
+                           id="download-button-{{ $application->id }}"
                            class="btn btn-sm btn-outline-primary" title="Скачать">
                             <i class="fas fa-download"></i>
                         </a>
@@ -77,7 +80,8 @@
                               class="d-inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Удалить">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Удалить"
+                                    id="delete-button-{{ $application->id }}">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
@@ -158,8 +162,8 @@
                 У вас пока нет созданных записок
             </div>
         @endforelse
-            <div class="d-flex justify-content-center mt-4">
-                {{ $applications->appends(request()->query())->links('pagination::bootstrap-5') }}
-            </div>
+        <div class="d-flex justify-content-center mt-4">
+            {{ $applications->appends(request()->query())->links('pagination::bootstrap-5') }}
+        </div>
     </div>
 @endsection

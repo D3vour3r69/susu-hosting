@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             //            PositionUserSeeder::class,
             FeatureSeeder::class,
             HeadsDirectorySeeder::class,
+            TestHeadUserSeeder::class
         ]);
     }
 }

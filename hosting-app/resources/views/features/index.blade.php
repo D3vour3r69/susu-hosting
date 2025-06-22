@@ -10,7 +10,7 @@
                 </h4>
             </div>
 
-            <div class="card-body">
+            <div class="feature-card-body">
                 <div class="mb-4">
                     <h5>Добавить новую категорию</h5>
                     <form action="{{ route('features.store') }}" method="POST">
@@ -38,7 +38,7 @@
                 </div>
 
                 @foreach($features as $feature)
-                    <div class="card mb-3">
+                    <div class="feature-item-card mb-3">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">{{ $feature->name }}</h5>
                             <form action="{{ route('features.destroy', $feature) }}" method="POST">
