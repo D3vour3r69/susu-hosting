@@ -71,6 +71,9 @@ cp .env.example .env
 docker compose exec app php artisan serve --env=dusk.local --port=8000
 ```
 ```bash
+php artisan migrate:fresh --seed  --env=dusk.local
+```
+```bash
 docker compose exec app php artisan dusk
 ```
 Остановка контейнеров
